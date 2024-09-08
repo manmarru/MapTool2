@@ -32,7 +32,7 @@ public:
 	class CVIBuffer_Terrain*	m_pVIBufferCom = { nullptr };
 
 public:
-	bool isPicking(_float3* pOut);
+	_bool isPicking(_float3* pOut);
 	_float4x4 Get_WorldMatrix() { return m_pTransformCom->Get_WorldMatrix(); }
 
 public:

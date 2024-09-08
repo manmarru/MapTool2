@@ -4,7 +4,7 @@
 
 #include <d3d11.h>
 
-#define ID3D11 ID3D11Device* _pDevice, ID3D11DeviceContext _pContext
+#define ID3D11 ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 

@@ -147,7 +147,9 @@
     <ClInclude Include="..\public\RotationCamera.h">
       <Filter>02.GameObjects\99.Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Navimesh.h" />
+    <ClInclude Include="..\public\Navimesh.h">
+      <Filter>02.GameObjects\Navimesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -219,7 +221,9 @@
     <ClCompile Include="..\private\RotationCamera.cpp">
       <Filter>02.GameObjects\99.Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Navimesh.cpp" />
+    <ClCompile Include="..\private\Navimesh.cpp">
+      <Filter>02.GameObjects\Navimesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
