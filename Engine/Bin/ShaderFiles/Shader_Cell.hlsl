@@ -16,7 +16,7 @@ VS_OUT VS_MAIN( /*정점*/VS_IN In)
 {
     VS_OUT Out = (VS_OUT) 0;
 
-	/* 정점에 위치를 월드 뷰 투영변환한다.*/
+	/* 정점에 위치를 월드 뷰 투영변환한다.*/		
 	/* 클라이언트에서 곱셈연산을 수행하는 TrnasformCoord함수와는 다르게 */
 	/* mul함수의 경우에는 순수하게 행렬의 곱하기만 수행을 하고 w나누기연산자체는 수행하지 않는다. */
     vector vPosition = mul(vector(In.vPosition, 1.f), g_WorldMatrix);

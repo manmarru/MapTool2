@@ -64,6 +64,9 @@
     <Filter Include="02.GameObjects\CustomNavi">
       <UniqueIdentifier>{37395a97-f4e4-42a8-a2a8-00142bc44af9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\LumiaMap">
+      <UniqueIdentifier>{d3cab7bb-9c1e-4431-b546-b5b2fe2507b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -150,6 +153,15 @@
     <ClInclude Include="..\public\CustomNavi.h">
       <Filter>02.GameObjects\CustomNavi</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Map_Beach.h">
+      <Filter>02.GameObjects\LumiaMap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Map_Forest.h">
+      <Filter>02.GameObjects\LumiaMap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Map_Hotel.h">
+      <Filter>02.GameObjects\LumiaMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -224,6 +236,15 @@
     <ClCompile Include="..\private\CustomNavi.cpp">
       <Filter>02.GameObjects\CustomNavi</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Map_Beach.cpp">
+      <Filter>02.GameObjects\LumiaMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Map_Hotel.cpp">
+      <Filter>02.GameObjects\LumiaMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Map_Forest.cpp">
+      <Filter>02.GameObjects\LumiaMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -245,17 +266,40 @@
     <Text Include="..\Bin\Data\Monsters.txt" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_CastingUI.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl">
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Zone.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCustomNavi.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Bin\ShaderFiles\Shader_Engine_Defines.hlsli">
+      <Filter>97.ShaderFiles</Filter>
+    </None>
   </ItemGroup>
 </Project>
