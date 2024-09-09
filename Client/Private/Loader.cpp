@@ -2,6 +2,8 @@
 #include "..\Public\Loader.h"
 
 #include "Terrain.h"
+#include "Navigation.h"
+#include "CustomNavi.h"
 
 #include "FreeCamera.h"
 #include "RotationCamera.h"
@@ -130,16 +132,18 @@ HRESULT CLoader::Ready_Resources_For_GamePlayLevel()
 
 	_matrix		PreTransformMatrix = XMMatrixIdentity();
 
-	/* For. Prototype_Component_Model_Fiona*/
-	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Fiona/Fiona.fbx", PreTransformMatrix))))
+	///* For. Prototype_Component_Model_Fiona*/
+	//PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"),
+	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Fiona/Fiona.fbx", PreTransformMatrix))))
+	//	return E_FAIL;
+
+	//For Prototype_Component_Model_Navigation
+	PreTransformMatrix = XMMatrixIdentity() * XMMatrixRotationX(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Navigation"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/NaviMesh/NaviMesh.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
-	//For Prototype_Component_Model_Navimesh
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Navimesh"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/NaviMelsh/Navi_Beach.obj"))))
-		return E_FAIL;
 
 #pragma region 야생동물
 	/* For. Prototype_Component_Model_Bat*/
@@ -229,6 +233,12 @@ HRESULT CLoader::Ready_Resources_For_GamePlayLevel()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	//For Prototype_GameObject_CustomNavi
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CustomNavi"),
+		CCustomNavi::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	/* For. Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Monster"),

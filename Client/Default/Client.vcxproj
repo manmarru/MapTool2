@@ -181,6 +181,7 @@
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\public\Collectible.h" />
     <ClInclude Include="..\public\CCollectibleUI.h" />
+    <ClInclude Include="..\public\CustomNavi.h" />
     <ClInclude Include="..\public\FreeCamera.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
@@ -188,7 +189,6 @@
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\Monster.h" />
-    <ClInclude Include="..\public\Navimesh.h" />
     <ClInclude Include="..\public\RotationCamera.h" />
     <ClInclude Include="..\Public\SaveObj.h" />
     <ClInclude Include="..\Public\Terrain.h" />
@@ -209,6 +209,7 @@
     <ClCompile Include="..\private\Beast.cpp" />
     <ClCompile Include="..\private\Collectible.cpp" />
     <ClCompile Include="..\private\CCollectibleUI.cpp" />
+    <ClCompile Include="..\private\CustomNavi.cpp" />
     <ClCompile Include="..\private\FreeCamera.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
@@ -216,7 +217,6 @@
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\Monster.cpp" />
-    <ClCompile Include="..\private\Navimesh.cpp" />
     <ClCompile Include="..\private\RotationCamera.cpp" />
     <ClCompile Include="..\Private\SaveObj.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />

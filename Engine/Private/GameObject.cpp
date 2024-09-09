@@ -28,7 +28,7 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(void* pArg)
 {
-	GAMEOBJECT_DESC*	pDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
+	GAMEOBJECT_DESC* pDesc = nullptr != pArg ? static_cast<GAMEOBJECT_DESC*>(pArg) : nullptr;
 
 	m_pTransformCom = CTransform::Create(m_pDevice, m_pContext, pDesc);
 	if (nullptr == m_pTransformCom)
