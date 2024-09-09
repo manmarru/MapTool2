@@ -273,7 +273,7 @@ void CLevel_GamePlay::Format_ImGui()
 			for (auto item : *pvecInven)
 				SaveStream << item << ' ';
 
-			SaveStream << ITEM_END << '\n';
+			SaveStream << ITEM_EOF << '\n';
 		}
 
 		SaveStream.close();
@@ -759,7 +759,7 @@ void CLevel_GamePlay::Load_Savemonster(ifstream* _LoadStream)
 	{
 		int eID;
 		*_LoadStream >> eID;
-		if (ITEM_END == (ITEMID)eID)
+		if (ITEM_EOF == (ITEMID)eID)
 			break;
 		pMonster->Add_Item((ITEMID)eID);
 	}
