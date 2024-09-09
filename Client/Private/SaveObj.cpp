@@ -24,10 +24,11 @@ HRESULT CSaveObj::Initialize(void* pArg)
 {
     SAVEOBJ_DESC* Desc = (SAVEOBJ_DESC*)pArg;
 
-    m_eType = Desc->eType;
-
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
+
+    m_eType = Desc->eType;
+    Set_Rotation(Desc->vRotation.x, Desc->vRotation.y, Desc->vRotation.z);
 
     return S_OK;
 }
@@ -37,19 +38,10 @@ void CSaveObj::Late_Update(_float fTimeDelta)
     __super::Late_Update(fTimeDelta);
 }
 
-void CSaveObj::Set_RotateX(_float _fTheta)
+void CSaveObj::Set_Rotation(_float _RotationX, _float _RotationY, _float RotationZ)
 {
-    m_pTransformCom->Rotation(_fvector{ 1.f, 0.f, 0.f }, XMConvertToRadians(_fTheta));
-}
-
-void CSaveObj::Set_RotateY(_float _fTheta)
-{
-    m_pTransformCom->Rotation(_fvector{ 0.f, 1.f, 0.f }, XMConvertToRadians(_fTheta));
-}
-
-void CSaveObj::Set_RotateZ(_float _fTheta)
-{
-    m_pTransformCom->Rotation(_fvector{ 0.f, 0.f, 1.f }, XMConvertToRadians(_fTheta));
+    m_vRotation = _float3{ _RotationX, _RotationY, RotationZ };
+    m_pTransformCom->Rotation(_RotationX, _RotationY, RotationZ);
 }
 
 void CSaveObj::Set_Pos(_float3 _vPos)

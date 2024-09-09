@@ -260,6 +260,14 @@ _bool CGameInstance::isPicked_InLocalSpace(const _float3& vPointA, const _float3
 {
 	return m_pPicking->isPicked_InLocalSpace(vPointA, vPointB, vPointC, pOut);
 }
+_bool CGameInstance::isPicked_InWorldSpace(const _float3& vPointA, const _float3& vPointB, const _float3& vPointC, _float3* pOut)
+{
+	return m_pPicking->isPicked_InWorldSpace(vPointA, vPointB, vPointC, pOut);
+}
+POINT CGameInstance::Get_MousePos()
+{
+	return m_pPicking->Get_MousePos();
+}
 #pragma endregion
 #pragma region CAMERA_MANAGER
 

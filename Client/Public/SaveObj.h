@@ -15,6 +15,7 @@ public:
 		_int eMonsterID;
 		_float3 vPos;
 		_float3 vRotation;
+		_uint iCellIndex;
 	};
 
 protected:
@@ -34,17 +35,17 @@ public:
 	void Set_Pos(_float3 _vPos);
 	void Set_PosAll(_float _fPos);
 	void Set_Scale(_float3 _vScale);
-	void Set_RotateX(_float _fTheta);
-	void Set_RotateY(_float _fTheta);
-	void Set_RotateZ(_float _fTheta);
+	void Set_Rotation(_float _RotationX, _float _RotationY, _float RotationZ);
 	void Plus_Pos(_float3 _fInput);
 	_float3 Get_Scale();
+	_float3 Get_Rotation() { return m_vRotation; }
 	_float3 Get_Pos();
 	OBJTYPE Get_Type() { return m_eType; }
 	virtual int Get_ID() = 0;
 
 private:
 	OBJTYPE m_eType{ OBJ_COLLECTIBLE };
+	_float3 m_vRotation = {};
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;

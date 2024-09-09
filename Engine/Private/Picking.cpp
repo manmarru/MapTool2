@@ -23,17 +23,16 @@ HRESULT CPicking::Initialize(HWND hWnd, _uint iWinSizeX, _uint iWinSizeY)
 
 void CPicking::Update()
 {
-	POINT			ptMouse{};
 
-	GetCursorPos(&ptMouse);
+	GetCursorPos(&m_tMousePos);
 
 	/* 뷰포트 == 로컬 * 월드행렬 * 뷰행렬 * 투영행렬 /w -> 뷰포트 변환 */
-	ScreenToClient(m_hWnd, &ptMouse);
+	ScreenToClient(m_hWnd, &m_tMousePos);
 
 	/* 투영스페이스 == 로컬 * 월드행렬 * 뷰행렬 * 투영행렬 /w */
 	_float3		vMousePos{};
-	vMousePos.x = ptMouse.x / (m_iWinSizeX * 0.5f) - 1.f;
-	vMousePos.y = ptMouse.y / (m_iWinSizeY * -0.5f) + 1.f;
+	vMousePos.x = m_tMousePos.x / (m_iWinSizeX * 0.5f) - 1.f;
+	vMousePos.y = m_tMousePos.y / (m_iWinSizeY * -0.5f) + 1.f;
 	vMousePos.z = 0.f; /* Near평면을 클릭한거야!! */
 
 	_vector		vMousePosvec{}, vRayPosvec{}, vRayDirvec{};
@@ -79,6 +78,27 @@ void CPicking::Transform_ToLocalSpace(const _float4x4& _WorldMatrix)
 
 	XMStoreFloat3(&m_vRayPos_InLocalSpace, rayPosInLocalSpace);
 	XMStoreFloat3(&m_vRayDir_InLocalSpace, rayDirInLocalSpace);
+}
+
+_bool CPicking::isPicked_InWorldSpace(const _float3& vPointA, const _float3& vPointB, const _float3& vPointC, _float3* pOut)
+{
+	_vector vecA = XMLoadFloat3(&vPointA);
+	_vector vecB = XMLoadFloat3(&vPointB);
+	_vector vecC = XMLoadFloat3(&vPointC);
+	_vector rayPos = XMLoadFloat3(&m_vRayPos);
+	_vector rayDir = XMLoadFloat3(&m_vRayDir);
+
+	float fDist = 0.0f;
+
+	if (TriangleTests::Intersects(rayPos, rayDir, vecA, vecB, vecC, fDist))
+	{
+		//만약에 dist도 필요하면 여기서 꺼내오는게 좋을듯
+		_vector intersection = rayPos + rayDir * fDist;
+		XMStoreFloat3(pOut, intersection);
+		return true;
+	}
+
+	return false;
 }
 
 _bool CPicking::isPicked_InLocalSpace(const _float3& vPointA, const _float3& vPointB, const _float3& vPointC, _float3* pOut)

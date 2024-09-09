@@ -4,13 +4,45 @@
 #include "VIBuffer_Cell.h"
 #endif // _DEBUG
 
-
-CCell::CCell(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
+CCell::CCell(ID3D11)
 	:m_pDevice{ _pDevice }
 	, m_pContext{ _pContext }
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
+}
+
+_fvector CCell::Get_Center()
+{
+	XMVECTOR total = XMVectorAdd(XMLoadFloat3(&m_vPoints[POINT_C]), XMVectorAdd(XMLoadFloat3(&m_vPoints[POINT_A]), XMLoadFloat3(&m_vPoints[POINT_B])));
+
+
+	return XMVectorDivide(total, XMVectorSet(3.f, 3.f, 3.f, 1.f));
+}
+
+pair<_float3, _float3> CCell::Get_LinePoint(LINE _eLine)
+{
+	pair<_float3, _float3> result;
+	switch (_eLine)
+	{
+	case Engine::CCell::LINE_AB:
+		result.first = m_vPoints[POINT_A];
+		result.second = m_vPoints[POINT_B];
+		return result;
+	case Engine::CCell::LINE_BC:
+		result.first = m_vPoints[POINT_B];
+		result.second = m_vPoints[POINT_C];
+		return result;
+	case Engine::CCell::LINE_CA:
+		result.first = m_vPoints[POINT_C];
+		result.second = m_vPoints[POINT_A];
+		return result;
+	default:
+		MSG_BOX(TEXT("failed to Get : LinePoint"));
+		break;
+	}
+
+	return result;
 }
 
 HRESULT CCell::Initialize(const _float3* pPoints, _int iIndex)
@@ -24,6 +56,22 @@ HRESULT CCell::Initialize(const _float3* pPoints, _int iIndex)
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
 #endif
+
+#pragma region Plane
+	XMStoreFloat4(&m_Plane, XMPlaneFromPoints(Get_Point(POINT_A), Get_Point(POINT_B), Get_Point(POINT_C)));
+	if (m_Plane.x < EPSILON && m_Plane.x > -EPSILON)
+	{
+		m_Plane.x = 0;
+	}
+	if (m_Plane.y < EPSILON && m_Plane.y > -EPSILON)
+	{
+		m_Plane.y = 0;
+	}
+	if (m_Plane.z < EPSILON && m_Plane.z > -EPSILON)
+	{
+		m_Plane.z = 0;
+	}
+#pragma endregion
 
 	return S_OK;
 }
@@ -68,15 +116,27 @@ _bool CCell::isIn(_fvector vPosition, _int* pNeighborIndex)
 		_vector		vLine = XMLoadFloat3(&m_vPoints[(i + 1) % 3]) - XMLoadFloat3(&m_vPoints[i]);
 		vDest = XMVectorSet(XMVectorGetZ(vLine) * -1.f, 0.f, XMVectorGetX(vLine), 0.f);
 
-		if (0 < XMVectorGetX(XMVector3Dot(vSour, vDest)))
+		//네비메쉬 뒤집어놔서 외적하면 음수 = 위쪽임.
+		if (0 > XMVectorGetX(XMVector3Dot(vSour, vDest))) //꼭 기억하도록 이 주석을 근처에 50에게 보내지 않으면 당신은 네루네루네 됩니다. 죽일까 마스터?
 		{
-			*pNeighborIndex = m_iNeighborIndices[i];
+			if (nullptr != pNeighborIndex)
+				*pNeighborIndex = m_iNeighborIndices[i];
 			return false;
 		}
 
 	}
 
 	return true;
+}
+
+_float CCell::Compute_Height(const _fvector& vLocalPos)
+{
+	//셀은 삼각형 딱 하나다.
+	_float3 LocalPos;
+
+	XMStoreFloat3(&LocalPos, vLocalPos);
+
+	return (-m_Plane.x * LocalPos.x - m_Plane.z * LocalPos.z - m_Plane.w) / m_Plane.y;
 }
 
 #ifdef _DEBUG
@@ -89,13 +149,13 @@ HRESULT CCell::Render()
 
 	return S_OK;
 }
-#endif // _DEBUG
+#endif
 
-CCell* CCell::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _float3* pPoints, _int iIndex)
+CCell* CCell::Create(ID3D11, const _float3* _pPoints, _int _iIndex)
 {
 	CCell* pInstance = new CCell(_pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize(pPoints, iIndex)))
+	if (FAILED(pInstance->Initialize(_pPoints, _iIndex)))
 	{
 		MSG_BOX(TEXT("Failed to Created : CCell"));
 		Safe_Release(pInstance);
@@ -108,7 +168,10 @@ void CCell::Free()
 {
 	__super::Free();
 
+#ifdef _DEBUG
+	Safe_Release(m_pVIBuffer);
+#endif
+
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 }
-

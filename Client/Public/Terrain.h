@@ -7,6 +7,7 @@ BEGIN(Engine)
 class CShader;
 class CTexture;
 class CVIBuffer_Terrain;
+class CNavigation;
 END
 
 BEGIN(Client)
@@ -27,16 +28,13 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	class CShader*				m_pShaderCom = { nullptr };
-	class CTexture*				m_pTextureCom = { nullptr };
-	class CVIBuffer_Terrain*	m_pVIBufferCom = { nullptr };
+	CNavigation*			m_pNavigationCom = { nullptr };
 
 public:
 	_bool isPicking(_float3* pOut);
 	_float4x4 Get_WorldMatrix() { return m_pTransformCom->Get_WorldMatrix(); }
+	_uint Find_CellIndex(_float3 _vPos);
 
-public:
-	void ReSize(int iSizeX, int iSizeZ);
 
 private:
 	HRESULT Ready_Components();
