@@ -21,10 +21,13 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	if (FAILED(Ready_Layer_Camera()))
 		return E_FAIL;
+
 	if (FAILED(Ready_Layer_BackGround()))
 		return E_FAIL;
+
 	if (FAILED(Ready_Layer_Effect()))
 		return E_FAIL;
+
 	if (FAILED(Ready_Layer_Monster()))
 		return E_FAIL;
 	
@@ -84,6 +87,7 @@ HRESULT CLevel_GamePlay::Render()
 	return S_OK;
 }
 
+
 HRESULT CLevel_GamePlay::Ready_Lights()
 {
 	/* 게임플레이 레벨에 필요한 광원을 준비한다. */
@@ -120,22 +124,22 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera()
 	return S_OK;
 }
 
-
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround()
 {
 	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_Terrain"), TEXT("Prototype_GameObject_Terrain"))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_Terrain"), TEXT("Prototype_GameObject_CustomNavi"))))
+	//네비메쉬 모델 출력용
+	//if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_Terrain"), TEXT("Prototype_GameObject_CustomNavi"))))
+	//	return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ModelMap"), TEXT("Prototype_GameObject_Map_Beach"))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_Terrain"), TEXT("Prototype_GameObject_Map_Beach"))))
+	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ModelMap"), TEXT("Prototype_GameObject_Map_Forest"))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_Terrain"), TEXT("Prototype_GameObject_Map_Forest"))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_Terrain"), TEXT("Prototype_GameObject_Map_Hotel"))))
+	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ModelMap"), TEXT("Prototype_GameObject_Map_Hotel"))))
 		return E_FAIL;
 
 	//if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Prototype_GameObject_Sky"))))
@@ -243,6 +247,7 @@ HRESULT CLevel_GamePlay::Ready_SpecularMap()
 	return S_OK;
 }
 
+
 //초기UI
 void CLevel_GamePlay::Format_ImGui()
 {
@@ -252,14 +257,17 @@ void CLevel_GamePlay::Format_ImGui()
 	ImGui::Begin("Hello_World");
 	if (ImGui::Button("Save_Monster"))
 	{
-		ofstream SaveStream("../Bin/Data/Monsters.txt", ios::in);
+		ofstream SaveStream("../Bin/Data/Monsters.txt");
 
 		for (auto monster : m_vecMonster)
 		{
 			SaveStream << OBJ_BEAST << '\n' << monster->Get_ID() << '\n';
 
 			SaveStream << monster->Get_Pos().x << ' ' << monster->Get_Pos().y << ' ' << monster->Get_Pos().z << '\n';
-			SaveStream << monster->Get_Scale().x << ' ' << monster->Get_Scale().y << ' ' << monster->Get_Scale().z << '\n';
+			
+			SaveStream << monster->Get_Rotation().x << ' ' << monster->Get_Rotation().y << ' ' << monster->Get_Rotation().z << '\n';
+
+			SaveStream << static_cast<CTerrain*>(m_pGameInstance->Get_Objectlist(LEVEL_GAMEPLAY, TEXT("Layer_Terrain"))->back())->Find_CellIndex(monster->Get_Pos()) << '\n';
 
 			vector<ITEMID>* pvecInven = monster->Get_Inventory();
 			for (auto item : *pvecInven)
@@ -427,17 +435,11 @@ void CLevel_GamePlay::Format_SettingWindow()
 	ImGui::BulletText("Rotation");
 
 	ImGui::SliderFloat3("xyzRotation", m_vRotation, 0, 360, "%.3f", 1);
-	ImGui::SliderFloat("all", &m_vRotateALL, 0, 255, "%.3f", 1.0f);
 	ImGui::Checkbox("syncro", &m_bRotateAll);
-	ImGui::SameLine();
-	if (ImGui::Button("syncroX"))
-		m_vRotateALL = m_vRotation[1] = m_vRotation[2] = m_vRotation[0];
-	ImGui::SameLine();
-	if (ImGui::Button("syncroY"))
-		m_vRotateALL = m_vRotation[0] = m_vRotation[2] = m_vRotation[1];
-	ImGui::SameLine();
-	if (ImGui::Button("syncroZ"))
-		m_vRotateALL = m_vRotation[1] = m_vRotation[0] = m_vRotation[2];
+	if (m_bRotateAll)
+	{
+		m_pCurMonster->Set_Rotation(XMConvertToRadians(m_vRotation[0]), XMConvertToRadians(m_vRotation[1]), XMConvertToRadians(m_vRotation[2]));
+	}
 
 	/*m_pCurMonster->Set_RotateX(m_vRotation[0]);
 	m_pCurMonster->Set_RotateY(m_vRotation[1]);
@@ -546,11 +548,6 @@ void CLevel_GamePlay::Format_Terrain_UI()
 	ImGui::InputInt2("TerrainSize", iTerrainInput);
 	vector<int> test;
 
-	if (ImGui::Button("MakeTerrain"))
-	{
-		static_cast<CTerrain*>(m_pGameInstance->Get_Objectlist(LEVEL_GAMEPLAY, TEXT("Layer_Terrain"))->back())->ReSize(iTerrainInput[0], iTerrainInput[1]);
-	}
-
 	ImGui::End();
 }
 
@@ -637,6 +634,7 @@ void CLevel_GamePlay::Format_CollectibleOBj()
 
 	ImGui::End();
 }
+
 
 //표시되는 수치 동기화
 void CLevel_GamePlay::Syncro_CurMonster()
@@ -746,18 +744,16 @@ void CLevel_GamePlay::Load_Savemonster(ifstream* _LoadStream)
 		return;
 
 	*_LoadStream >> vOutputPos.x >> vOutputPos.y >> vOutputPos.z;
-	//pMonster->Set_Pos(vOutputPos);
 	Desc.vPos = vOutputPos;
 	*_LoadStream >> vOutputPos.x >> vOutputPos.y >> vOutputPos.z;
-	//pMonster->Set_Scale(vOutputPos);
 	Desc.vRotation = vOutputPos;
+
+	*_LoadStream >> Desc.iCellIndex;
 
 	Desc.fRotationPerSec = 0.f; Desc.fSpeedPerSec = 0.f;
 
 	CBeast* pMonster;
 	pMonster = (CBeast*)m_pGameInstance->Add_CloneObject_ToLayer_Get(LEVEL_GAMEPLAY, TEXT("Layer_Beast"), TEXT("Prototype_GameObject_Beast"), &Desc);
-
-
 
 	while (true)
 	{

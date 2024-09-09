@@ -3,10 +3,11 @@
 
 #include "Shader.h"
 #include "GameInstance.h"
+#include "Transform.h"
 
 _float4x4 CNavigation::m_WorldMatrix = {};
 
-CNavigation::CNavigation(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext)
+CNavigation::CNavigation(ID3D11)
 	:CComponent{ _pDevice, _pContext }
 {
 }
@@ -16,6 +17,7 @@ CNavigation::CNavigation(const CNavigation& Prototype)
 	, m_Cells{ Prototype.m_Cells }
 #ifdef _DEBUG
 	, m_pShader{ Prototype.m_pShader }
+	, m_PreTransformMatrix{ Prototype.m_PreTransformMatrix }
 #endif
 {
 	for (auto& pCell : m_Cells)
@@ -25,21 +27,13 @@ CNavigation::CNavigation(const CNavigation& Prototype)
 #endif
 }
 
-HRESULT CNavigation::Initialize_Prototype(const _char* pModelFilePath, _fmatrix PreTransformMatrix)
+HRESULT CNavigation::Initialize_Prototype(ifstream* _LoadStream, _fmatrix PreTransformMatrix)
 {
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 
-	_uint iFlag = { 0 };
-
-	iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast | aiProcess_PreTransformVertices;
-
-	m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
-	if (nullptr == m_pAIScene)
-		return E_FAIL;
-
 	XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
 
-	if (FAILED(Ready_Cells()))
+	if (FAILED(Ready_Cells(_LoadStream)))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Neighbors()))
@@ -58,6 +52,13 @@ HRESULT CNavigation::Initialize_Prototype(const _char* pModelFilePath, _fmatrix 
 
 HRESULT CNavigation::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+		return S_OK;
+
+	NAVIGATION_DESC* pDesc = static_cast<NAVIGATION_DESC*>(pArg);
+
+	m_iCurrentCellIndex = pDesc->iCurrentIndex;
+
 	return S_OK;
 }
 
@@ -66,7 +67,44 @@ void CNavigation::Update(_fmatrix TerrainWorldMatrix)
 	XMStoreFloat4x4(&m_WorldMatrix, TerrainWorldMatrix);
 }
 
-#ifdef _DEBUG
+_bool CNavigation::isMove(_fvector vPosition)
+{
+	_vector		vLocalPos = XMVector3TransformCoord(vPosition, XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_WorldMatrix)));
+
+	_int			iNeighborIndex = { -1 };
+
+	/* 원래 있던 삼각형 안에서 움직인거야. */
+	if (true == m_Cells[m_iCurrentCellIndex]->isIn(vLocalPos, &iNeighborIndex))
+	{
+		return true;
+	}
+
+	/* 원래 있던 삼각형을 벗어난거야. */
+	else
+	{
+		/* 나간쪽에 이웃이 있다라면. */
+		if (-1 != iNeighborIndex)
+		{
+			while (true)
+			{
+				if (-1 == iNeighborIndex)
+					return false; //임시
+
+				if (true == m_Cells[iNeighborIndex]->isIn(vLocalPos, &iNeighborIndex))
+					break;
+			}
+
+
+			m_iCurrentCellIndex = iNeighborIndex;
+			return true;
+		}
+
+		/* 나간쪽에 이웃이 없다라면. */
+		else
+			return false;
+	}
+}
+
 
 HRESULT CNavigation::Render()
 {
@@ -101,8 +139,57 @@ HRESULT CNavigation::Render()
 
 	return S_OK;
 }
+void CNavigation::Rending_All()
+{
+	for (auto pCell : m_Cells)
+		pCell->Render();
+}
 
-#endif
+
+_float4x4 CNavigation::Get_WorldMatrix_Inverse()
+{
+	_matrix WorldMatrixInverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_WorldMatrix));
+
+	_float4x4 result;
+
+	XMStoreFloat4x4(&result, WorldMatrixInverse);
+
+	return result;
+}
+
+_fvector CNavigation::Get_Center(_int _iCellIndex)
+{
+	return m_Cells[_iCellIndex]->Get_Center();
+}
+
+_float CNavigation::Compute_Height(const _fvector& vLocalPos)
+{
+	return m_Cells[m_iCurrentCellIndex]->Compute_Height(vLocalPos);
+}
+
+_bool CNavigation::isPicking(_float3* pOut)
+{
+	_float3 A;
+	_float3 B;
+	_float3 C;
+	for (auto& pCell : m_Cells)
+	{
+		XMStoreFloat3(&A, pCell->Get_Point(CCell::POINT_A));
+		XMStoreFloat3(&B, pCell->Get_Point(CCell::POINT_B));
+		XMStoreFloat3(&C, pCell->Get_Point(CCell::POINT_C));
+
+		if (m_pGameInstance->isPicked_InWorldSpace(A, B, C, pOut))
+		{
+
+			cout << pCell->Get_Index() << endl;
+
+
+			return true;
+		}
+	}
+	return false;
+}
+
 
 HRESULT CNavigation::SetUp_Neighbors()
 {
@@ -133,41 +220,93 @@ HRESULT CNavigation::SetUp_Neighbors()
 	return S_OK;
 }
 
-HRESULT CNavigation::Ready_Cells()
+HRESULT CNavigation::Ready_Cells(ifstream* _LoadStream)
 {
-	//일단은 무조건 메쉬가 하나라고 가정할거임
-	m_pAIMesh = m_pAIScene->mMeshes[0];
-	
-	//face에서 점 세개 꺼내서 CCell생성하고 face넘버 인덱스넘버로 넘긴다.
+	//로드할거
 	_float3 vPoints[3];
-	_uint vIndices[3];
+	_uint iNumFaces(0);
+	_vector transformPoints[3];
+	_matrix preTransformMatrix = XMLoadFloat4x4(&m_PreTransformMatrix);
+	_uint iNumAllFaces(0);
 
-	for (size_t i = 0; i < m_pAIMesh->mNumFaces; i++)
+	for (size_t k = 0; k < 4; k++)
 	{
-		vIndices[0] = m_pAIMesh->mFaces[i].mIndices[0];
-		vIndices[1] = m_pAIMesh->mFaces[i].mIndices[1];
-		vIndices[2] = m_pAIMesh->mFaces[i].mIndices[2];
+		_LoadStream->read((char*)&iNumFaces, sizeof(_uint));
+		iNumAllFaces += iNumFaces;
 
-		memcpy(&vPoints[0], &_float3(m_pAIMesh->mVertices[vIndices[0]].x * 30.f, m_pAIMesh->mVertices[vIndices[0]].y* 30.f, m_pAIMesh->mVertices[vIndices[0]].z* 30.f), sizeof(_float3));
-		memcpy(&vPoints[1], &_float3(m_pAIMesh->mVertices[vIndices[1]].x * 30.f, m_pAIMesh->mVertices[vIndices[1]].y* 30.f, m_pAIMesh->mVertices[vIndices[1]].z* 30.f), sizeof(_float3));
-		memcpy(&vPoints[2], &_float3(m_pAIMesh->mVertices[vIndices[2]].x * 30.f, m_pAIMesh->mVertices[vIndices[2]].y* 30.f, m_pAIMesh->mVertices[vIndices[2]].z* 30.f), sizeof(_float3));
+		for (size_t i = iNumAllFaces - iNumFaces; i < iNumAllFaces; i++)
+		{
+			_LoadStream->read((char*)&vPoints[0], sizeof(_float3));
+			_LoadStream->read((char*)&vPoints[1], sizeof(_float3));
+			_LoadStream->read((char*)&vPoints[2], sizeof(_float3));
+			for (size_t j = 0; j < 3; j++)
+			{
+				transformPoints[j] = XMVector3Transform(XMLoadFloat3(&vPoints[j]), preTransformMatrix);
+				XMStoreFloat3(&vPoints[j], transformPoints[j]);
+			}
+			CCell* pCell = CCell::Create(m_pDevice, m_pContext, vPoints, i);
+			if (nullptr == pCell)
+				return E_FAIL;
 
-		CCell* pCell = CCell::Create(m_pDevice, m_pContext, vPoints, i);
-		if (nullptr == pCell)
-			return E_FAIL;
-
-		m_Cells.emplace_back(pCell);
+			m_Cells.emplace_back(pCell);
+		}
 	}
 
 
 	return S_OK;
 }
 
-CNavigation* CNavigation::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
+// 교차하면 true
+_bool CNavigation::CrossCheck(_float3 _vStart, _float3 _vEnd, _float3 _vP1, _float3 _vP2)
+{
+	_vector vStart = XMLoadFloat2(&_float2(_vStart.x, _vStart.z));
+	_vector vEnd = XMLoadFloat2(&_float2(_vEnd.x, _vEnd.z));
+	_vector vP1 = XMLoadFloat2(&_float2(_vP1.x, _vP1.z));
+	_vector vP2 = XMLoadFloat2(&_float2(_vP2.x, _vP2.z));
+
+	if (XMVector2Equal(vStart, vP1) || XMVector2Equal(vStart, vP2)
+		|| XMVector2Equal(vEnd, vP1) || XMVector2Equal(vEnd, vP2))
+		return true;
+
+	_vector MainLine = vEnd - vStart;
+	_vector Line1 = vP1 - vStart;
+	_vector Line2 = vP2 - vStart;
+
+	return 0 > XMVectorGetX(XMVector2Cross(MainLine, Line1)) * XMVectorGetX(XMVector2Cross(MainLine, Line2));
+}
+
+_float3 CNavigation::Closer(_float3 _vMainPos, _float3 _vP1, _float3 _vP2)
+{
+	return XMVectorGetX(XMVector2Length(XMLoadFloat2(&_float2{ _vP1.x - _vMainPos.x, _vP1.z - _vMainPos.z }))) <=
+		XMVectorGetX(XMVector2Length(XMLoadFloat2(&_float2{ _vP2.x - _vMainPos.x, _vP2.z - _vMainPos.z }))) ? _vP1 : _vP2;
+}
+
+_float3 CNavigation::Brand_NEW_Closer(_float3 _vCompare1, _float3 _vCompare2, _float3 _vNextLineCenter)
+{
+	return XMVectorGetX(XMVector2Length(XMLoadFloat2(&_float2{ _vCompare1.x - _vNextLineCenter.x, _vCompare1.z - _vNextLineCenter.z }))) >
+		XMVectorGetX(XMVector2Length(XMLoadFloat2(&_float2{ _vCompare1.x - _vNextLineCenter.x, _vCompare1.z - _vNextLineCenter.z }))) ? _vCompare1 : _vCompare2;
+}
+
+_uint CNavigation::Find_MyCell(_fvector _WorldPos)
+{
+	for (auto pCell : m_Cells)
+	{
+		if (pCell->isIn(_WorldPos, nullptr))
+		{
+			return pCell->Get_Index();
+		}
+	}
+
+
+	return -1;
+}
+
+
+CNavigation* CNavigation::Create(ID3D11, ifstream* _LoadStream, _fmatrix PreTransformMatrix)
 {
 	CNavigation* pInstance = new CNavigation(_pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pModelFilePath, PreTransformMatrix)))
+	if (FAILED(pInstance->Initialize_Prototype(_LoadStream, PreTransformMatrix)))
 	{
 		MSG_BOX(TEXT("Failed to Created : CNavigation"));
 		Safe_Release(pInstance);
@@ -195,6 +334,8 @@ void CNavigation::Free()
 
 	for (auto& pCell : m_Cells)
 		Safe_Release(pCell);
+
+	Safe_Release(m_pShader);
 
 	m_Cells.clear();
 }

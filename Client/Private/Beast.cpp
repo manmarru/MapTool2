@@ -44,7 +44,7 @@ void CBeast::Priority_Update(_float fTimeDelta)
 
 void CBeast::Update(_float fTimeDelta)
 {
-	m_pModelCom->Play_Animation(fTimeDelta);
+	//m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CBeast::Late_Update(_float fTimeDelta)
@@ -99,7 +99,7 @@ void CBeast::Pop_Item(int iNum)
 HRESULT CBeast::Ready_Components()
 {
 	/* FOR.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxModel"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

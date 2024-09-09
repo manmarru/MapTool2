@@ -9,7 +9,7 @@ CTerrain::CTerrain(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 }
 
 CTerrain::CTerrain(const CTerrain & Prototype)
-	: CGameObject{ Prototype }
+	: CGameObject(Prototype)
 {
 }
 
@@ -53,24 +53,8 @@ void CTerrain::Late_Update(_float fTimeDelta)
 
 HRESULT CTerrain::Render()
 {
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))		
-		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pTextureCom->Bind_ShadeResource(m_pShaderCom, "g_Texture", 1)))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Begin(0)))
-		return E_FAIL;
-
-
-	if (FAILED(m_pVIBufferCom->Bind_Buffers()))
-		return E_FAIL;
-	if (FAILED(m_pVIBufferCom->Render()))
-		return E_FAIL;
+	m_pNavigationCom->Render();
 
 	return S_OK;
 }
@@ -78,30 +62,19 @@ HRESULT CTerrain::Render()
 bool CTerrain::isPicking(_float3* pOut)
 {
 	_float4x4 world = m_pTransformCom->Get_WorldMatrix();
-	return m_pVIBufferCom->isPicking(world, pOut);
+	return m_pNavigationCom->isPicking(pOut);
 }
 
-void CTerrain::ReSize(int iSizeX, int iSizeZ)
+_uint CTerrain::Find_CellIndex(_float3 _vPos)
 {
-	/* FOR.Com_VIBuffer */
-	m_pVIBufferCom->Resize(iSizeX, iSizeZ);
+	return m_pNavigationCom->Find_MyCell(XMLoadFloat3(&_vPos));
 }
 
 HRESULT CTerrain::Ready_Components()
 {
-	/* FOR.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxNorTex"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;
-
-	/* FOR.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Terrain"),
-		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-		return E_FAIL;
-
-	/* FOR.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
+	/* For.Com_Navigation */
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
+		TEXT("Com_Navigation"), reinterpret_cast<CComponent**>(&m_pNavigationCom))))
 		return E_FAIL;
 
 	return S_OK;
@@ -139,7 +112,5 @@ void CTerrain::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pNavigationCom);
 }

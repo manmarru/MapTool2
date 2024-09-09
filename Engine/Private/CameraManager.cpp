@@ -34,6 +34,8 @@ HRESULT CCameraManager::Insert_Camera(_int _iCameraID, CGameObject* _pCamera)
     {
         m_mapCamera.emplace(_iCameraID, (CCamera*)_pCamera);
 
+        Safe_AddRef(_pCamera);
+
         return S_OK;
     }
     MSG_BOX(TEXT("Camera_Not_Exist"));
@@ -60,8 +62,8 @@ CCameraManager* CCameraManager::Create()
 
 void CCameraManager::Free()
 {
-    for (auto iter : m_mapCamera)
-        Safe_Release(iter.second);
+    Safe_Release(m_mapCamera[1]);
+    Safe_Release(m_mapCamera[2]);
 
     m_mapCamera.clear();
 }
