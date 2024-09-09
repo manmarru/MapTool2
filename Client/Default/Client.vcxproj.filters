@@ -61,8 +61,8 @@
     <Filter Include="02.GameObjects\03.UI\CCollectible">
       <UniqueIdentifier>{a8a8ac9b-047c-4a51-8a05-77ab780edd73}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Navimesh">
-      <UniqueIdentifier>{ab380491-3e15-4ba1-9a0f-3ac9c337fa5e}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\CustomNavi">
+      <UniqueIdentifier>{37395a97-f4e4-42a8-a2a8-00142bc44af9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -147,8 +147,8 @@
     <ClInclude Include="..\public\RotationCamera.h">
       <Filter>02.GameObjects\99.Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Navimesh.h">
-      <Filter>02.GameObjects\Navimesh</Filter>
+    <ClInclude Include="..\public\CustomNavi.h">
+      <Filter>02.GameObjects\CustomNavi</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -221,8 +221,8 @@
     <ClCompile Include="..\private\RotationCamera.cpp">
       <Filter>02.GameObjects\99.Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Navimesh.cpp">
-      <Filter>02.GameObjects\Navimesh</Filter>
+    <ClCompile Include="..\private\CustomNavi.cpp">
+      <Filter>02.GameObjects\CustomNavi</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
