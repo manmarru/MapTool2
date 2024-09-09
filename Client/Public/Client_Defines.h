@@ -45,7 +45,8 @@ namespace Client
 
 	enum ITEMID
 	{
-		ITEM_CARERA
+		ITEM_EOF = -1
+		, ITEM_CARERA
 		, ITEM_SCOPE
 		, ITEM_SEARCHDRONE
 		, ITEM_GUNPOWDER

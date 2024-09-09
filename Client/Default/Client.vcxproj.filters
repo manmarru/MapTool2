@@ -263,6 +263,7 @@
     <Text Include="ReadMe.txt">
       <Filter>98.Default</Filter>
     </Text>
+    <Text Include="..\Bin\Data\Monsters.txt" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_CastingUI.hlsl">

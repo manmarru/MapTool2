@@ -164,6 +164,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="..\Bin\Data\Monsters.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
