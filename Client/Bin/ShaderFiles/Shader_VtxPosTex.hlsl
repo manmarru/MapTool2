@@ -1,4 +1,5 @@
 
+#include "Shader_Engine_Defines.hlsli"
 /* float2 float3 float4 == vector */
 /* float1x3, float3x3, float1x3, float4x4 == matrix */
 
@@ -13,13 +14,6 @@
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_Texture;
-
-sampler LinearSampler = sampler_state 
-{
-	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = wrap;
-	AddressV = WRAP;
-};
 
 struct VS_IN
 {
@@ -74,17 +68,20 @@ struct PS_OUT
 	vector vColor : SV_TARGET0;
 };
 
+vector Sample(float2 vTexcoord)
+{
+    return g_Texture.Sample(LinearSampler, vTexcoord);
+}
+
 /* 1. 픽셀의 최종적인 색상을 결정한다. */
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 	
-	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);/*vector(1.f, In.vTexcoord.y, 0.f, 1.f);*/	
-
+    Out.vColor = Sample(In.vTexcoord); /*vector(1.f, In.vTexcoord.y, 0.f, 1.f);*/
+	
 	if (0.1 >= Out.vColor.a)
 		discard;
-
-//	Out.vColor.gb = Out.vColor.r;
 
 	return Out;
 }
@@ -94,20 +91,13 @@ PS_OUT PS_MAIN(PS_IN In)
 technique11	DefaultTechnique
 {
 	/* 빛연산 + 림라이트 + ssao + 노멀맵핑 + pbr*/
-	pass UI
-	{
-		//SetBlendState(나만의블렌드스테이츠);
-		//SetDepthStecilState();
-		//SetRasterizerState();
+    pass UI
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-
-	/* 디스토션 + 블렌딩 */
-	//pass Effect
-	//{
-	//	VertexShader = compile vs_5_0 VS_MAIN_Special();
-	//	PixelShader = compile ps_5_0 PS_MAIN_Special();
-	//}
+        VertexShader = compile vs_5_0 VS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
 }

@@ -77,7 +77,7 @@ HRESULT CCustomNavi::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
-	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Cell.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements);
+	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCustomNavi.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements);
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
