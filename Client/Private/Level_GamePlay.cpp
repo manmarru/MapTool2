@@ -299,7 +299,7 @@ void CLevel_GamePlay::Format_ImGui()
 			for (auto item : *pvecInven)
 				SaveStream << item << ' ';
 
-			SaveStream << ITEM_EOF << '\n';
+			SaveStream << ITEM_NONE << '\n';
 		}
 
 		SaveStream.close();
@@ -510,8 +510,8 @@ void CLevel_GamePlay::Format_SettingWindow()
 		{
 			ImGui::TableNextColumn();
 			char buf[128];
-			//sprintf_s(buf, "%d ##%d", (int)(*iter), i);
-			sprintf_s(buf, "%s ##%d", ItemID_To_Char(*iter), i);
+			sprintf_s(buf, "%d ##%d", (int)(*iter), i);
+			//sprintf_s(buf, "%s ##%d", ItemID_To_Char(*iter), i);
 			if (ImGui::Button(buf))
 			{
 				iter = pinven->erase(iter);
@@ -738,25 +738,6 @@ const char* CLevel_GamePlay::CollectibleID_To_Char(_int _eCollectibleID)
 	return "";
 }
 
-const char* CLevel_GamePlay::ItemID_To_Char(ITEMID _eItemID)
-{
-	switch (_eItemID)
-	{
-	case Client::ITEM_CARERA:
-		return "Camera";
-	case Client::ITEM_SCOPE:
-		return "Scope";
-	case Client::ITEM_SEARCHDRONE:
-		return "SearchDrone";
-	case Client::ITEM_GUNPOWDER:
-		return "Gunpowder";
-	default:
-		return "";
-	}
-
-	return "";
-}
-
 void CLevel_GamePlay::Load_Savemonster(ifstream* _LoadStream)
 {
 	_int iOutput;
@@ -785,7 +766,7 @@ void CLevel_GamePlay::Load_Savemonster(ifstream* _LoadStream)
 	{
 		int eID;
 		*_LoadStream >> eID;
-		if (ITEM_EOF == (ITEMID)eID)
+		if (-1 == (ITEMID)eID)
 			break;
 		pMonster->Add_Item((ITEMID)eID);
 	}

@@ -168,6 +168,9 @@
     <ClInclude Include="..\public\ItemBox.h">
       <Filter>02.GameObjects\ItemBox</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Client_Enums.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -276,9 +279,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_CastingUI.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl">
