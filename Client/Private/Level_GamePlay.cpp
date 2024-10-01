@@ -5,6 +5,7 @@
 #include "FreeCamera.h"
 #include "terrain.h"
 #include "Beast.h"
+#include "ItemBox.h"
 #include "Collectible.h"
 
 #include "GameInstance.h"
@@ -31,6 +32,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster()))
 		return E_FAIL;
 	
+	if (FAILED(Ready_ItemBox()))
+		return E_FAIL;
+
 	if (FAILED(Ready_LandObjects()))
 		return E_FAIL;
 
@@ -164,6 +168,28 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster()
 {
 	//if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_Monster"), TEXT("Prototype_GameObject_Monster"))))
 	//		return E_FAIL;	
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_ItemBox()
+{
+	wchar_t buffer[MAX_PATH];
+
+	CItemBox::ITEMBOX_DESC itembox_Desc;
+
+
+	for (size_t i = 1; i < 30; i++)
+	{
+		swprintf(buffer, MAX_PATH, TEXT("Prototype_Component_Model_ItemSpot_%d"), i);
+		
+		itembox_Desc.ModelTag = buffer;
+
+		if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ItemBox"), TEXT("Prototype_GameObject_ItemBox"), &itembox_Desc)))
+			return E_FAIL;
+	}
+
+
 
 	return S_OK;
 }
@@ -666,7 +692,7 @@ void CLevel_GamePlay::Attatch_On_Picking()
 
 void CLevel_GamePlay::Key_Input()
 {
-	if (GetAsyncKeyState(VK_LSHIFT))
+	if (GetAsyncKeyState(VK_RSHIFT))
 	{
 		m_pGameInstance->Set_CameraIndex(2);
 	}
