@@ -183,6 +183,7 @@
     <ClInclude Include="..\public\CCollectibleUI.h" />
     <ClInclude Include="..\public\CustomNavi.h" />
     <ClInclude Include="..\public\FreeCamera.h" />
+    <ClInclude Include="..\public\ItemBox.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="..\private\CCollectibleUI.cpp" />
     <ClCompile Include="..\private\CustomNavi.cpp" />
     <ClCompile Include="..\private\FreeCamera.cpp" />
+    <ClCompile Include="..\private\ItemBox.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />

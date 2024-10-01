@@ -67,6 +67,9 @@
     <Filter Include="02.GameObjects\LumiaMap">
       <UniqueIdentifier>{d3cab7bb-9c1e-4431-b546-b5b2fe2507b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\ItemBox">
+      <UniqueIdentifier>{3622744d-8151-4b34-9aa3-daf107e1d36a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -162,6 +165,9 @@
     <ClInclude Include="..\Public\Map_Hotel.h">
       <Filter>02.GameObjects\LumiaMap</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ItemBox.h">
+      <Filter>02.GameObjects\ItemBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -244,6 +250,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Map_Forest.cpp">
       <Filter>02.GameObjects\LumiaMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ItemBox.cpp">
+      <Filter>02.GameObjects\ItemBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
