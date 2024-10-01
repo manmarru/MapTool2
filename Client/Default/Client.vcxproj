@@ -179,6 +179,7 @@
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\public\Beast.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
+    <ClInclude Include="..\Public\Client_Enums.h" />
     <ClInclude Include="..\public\Collectible.h" />
     <ClInclude Include="..\public\CCollectibleUI.h" />
     <ClInclude Include="..\public\CustomNavi.h" />
@@ -245,7 +246,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_CastingUI.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCustomNavi.hlsl" />
