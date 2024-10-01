@@ -5,7 +5,7 @@
 #include "GameInstance.h"
 
 CItemBox::CItemBox(ID3D11)
-    :CGameObject{ m_pDevice, _pContext }
+    :CGameObject{ _pDevice, _pContext }
 {
 }
 
@@ -31,6 +31,8 @@ HRESULT CItemBox::Initialize(void* _pArg)
 
     if (FAILED(Ready_Components(pDesc->ModelTag)))
         return E_FAIL;
+
+    m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(-165.877, 0.f, -91.058f, 1.f));
 
     return S_OK;
 }
@@ -67,8 +69,6 @@ HRESULT CItemBox::Render()
     for (size_t i = 0; i < iNumMeshes; i++)
     {
         if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", aiTextureType_DIFFUSE, i)))
-            return E_FAIL;
-        if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", aiTextureType_NORMALS, i)))
             return E_FAIL;
 
         if (FAILED(m_pShaderCom->Begin(0)))
