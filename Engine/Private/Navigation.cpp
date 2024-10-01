@@ -227,29 +227,24 @@ HRESULT CNavigation::Ready_Cells(ifstream* _LoadStream)
 	_uint iNumFaces(0);
 	_vector transformPoints[3];
 	_matrix preTransformMatrix = XMLoadFloat4x4(&m_PreTransformMatrix);
-	_uint iNumAllFaces(0);
 
-	for (size_t k = 0; k < 4; k++)
+	_LoadStream->read((char*)&iNumFaces, sizeof(_uint));
+
+	for (size_t i = 0; i < iNumFaces; i++)
 	{
-		_LoadStream->read((char*)&iNumFaces, sizeof(_uint));
-		iNumAllFaces += iNumFaces;
-
-		for (size_t i = iNumAllFaces - iNumFaces; i < iNumAllFaces; i++)
+		_LoadStream->read((char*)&vPoints[0], sizeof(_float3));
+		_LoadStream->read((char*)&vPoints[1], sizeof(_float3));
+		_LoadStream->read((char*)&vPoints[2], sizeof(_float3));
+		for (size_t j = 0; j < 3; j++)
 		{
-			_LoadStream->read((char*)&vPoints[0], sizeof(_float3));
-			_LoadStream->read((char*)&vPoints[1], sizeof(_float3));
-			_LoadStream->read((char*)&vPoints[2], sizeof(_float3));
-			for (size_t j = 0; j < 3; j++)
-			{
-				transformPoints[j] = XMVector3Transform(XMLoadFloat3(&vPoints[j]), preTransformMatrix);
-				XMStoreFloat3(&vPoints[j], transformPoints[j]);
-			}
-			CCell* pCell = CCell::Create(m_pDevice, m_pContext, vPoints, i);
-			if (nullptr == pCell)
-				return E_FAIL;
-
-			m_Cells.emplace_back(pCell);
+			transformPoints[j] = XMVector3Transform(XMLoadFloat3(&vPoints[j]), preTransformMatrix);
+			XMStoreFloat3(&vPoints[j], transformPoints[j]);
 		}
+		CCell* pCell = CCell::Create(m_pDevice, m_pContext, vPoints, i);
+		if (nullptr == pCell)
+			return E_FAIL;
+
+		m_Cells.emplace_back(pCell);
 	}
 
 

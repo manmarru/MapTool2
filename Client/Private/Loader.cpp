@@ -162,6 +162,25 @@ HRESULT CLoader::Ready_Resources_For_GamePlayLevel()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/Hotel/Rocks_Hotel.fbx"))))
 		return E_FAIL;
 
+#pragma region 아이템박스
+	wstring boxName;
+	_char ModelPath_ItemBox[MAX_PATH];
+	wchar_t buffer[MAX_PATH];
+	for (size_t i = 1; i < 30; i++)
+	{
+		swprintf(buffer, MAX_PATH, TEXT("Prototype_Component_Model_ItemSpot_%d"), i);
+		boxName = buffer;
+
+		snprintf(ModelPath_ItemBox, MAX_PATH, "../Bin/Resources/Models/ItemBox/Hotel/ItemSpot_(%d)/ItemSpot.fbx", i);
+		//For Prototype_Component_Model_ItemSpot_%d
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, boxName,
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, ModelPath_ItemBox))))
+			return E_FAIL;
+	}
+
+#pragma endregion
+
+
 	ifstream LoadStream;
 	LoadStream.open("../Bin/Data/Navigation.txt", ios::in | ios::binary | ios::app);
 
