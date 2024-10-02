@@ -28,8 +28,6 @@ public:
 
 	HRESULT Ready_Layer_Monster();
 
-	HRESULT Ready_ItemBox();
-
 	HRESULT Ready_LandObjects();
 
 	HRESULT Ready_SpecularMap();
