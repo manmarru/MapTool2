@@ -278,9 +278,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_CastingUI.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
@@ -305,10 +302,5 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCustomNavi.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Bin\ShaderFiles\Shader_Engine_Defines.hlsli">
-      <Filter>97.ShaderFiles</Filter>
-    </None>
   </ItemGroup>
 </Project>
