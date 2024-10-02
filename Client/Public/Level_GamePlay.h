@@ -28,8 +28,6 @@ public:
 
 	HRESULT Ready_Layer_Monster();
 
-	HRESULT Ready_ItemBox();
-
 	HRESULT Ready_LandObjects();
 
 	HRESULT Ready_SpecularMap();
@@ -72,7 +70,6 @@ private:
 	void Attatch_On_Picking();
 	const char* MonsterID_To_Char(_int _eMonsterID);
 	const char* CollectibleID_To_Char(_int _eCollectibleID);
-	const char* ItemID_To_Char(ITEMID _eItemID);
 	void Load_Savemonster(ifstream* _LoadStream);
 
 
