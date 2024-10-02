@@ -179,7 +179,6 @@
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\public\Beast.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
-    <ClInclude Include="..\Public\Client_Enums.h" />
     <ClInclude Include="..\public\Collectible.h" />
     <ClInclude Include="..\public\CCollectibleUI.h" />
     <ClInclude Include="..\public\CustomNavi.h" />
@@ -254,9 +253,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Zone.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Bin\ShaderFiles\Shader_Engine_Defines.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

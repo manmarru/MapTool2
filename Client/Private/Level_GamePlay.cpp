@@ -5,6 +5,7 @@
 #include "FreeCamera.h"
 #include "terrain.h"
 #include "Beast.h"
+#include "ItemBox.h"
 #include "Collectible.h"
 
 #include "GameInstance.h"
@@ -31,6 +32,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_Monster()))
 		return E_FAIL;
 	
+	if (FAILED(Ready_ItemBox()))
+		return E_FAIL;
+
 	if (FAILED(Ready_LandObjects()))
 		return E_FAIL;
 
@@ -168,6 +172,28 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster()
 	return S_OK;
 }
 
+HRESULT CLevel_GamePlay::Ready_ItemBox()
+{
+	wchar_t buffer[MAX_PATH];
+
+	CItemBox::ITEMBOX_DESC itembox_Desc;
+
+
+	for (size_t i = 1; i < 30; i++)
+	{
+		swprintf(buffer, MAX_PATH, TEXT("Prototype_Component_Model_ItemSpot_%d"), i);
+		
+		itembox_Desc.ModelTag = buffer;
+
+		if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ItemBox"), TEXT("Prototype_GameObject_ItemBox"), &itembox_Desc)))
+			return E_FAIL;
+	}
+
+
+
+	return S_OK;
+}
+
 HRESULT CLevel_GamePlay::Ready_LandObjects()
 {
 //	CLandObject::LANDOBJECT_DESC	Desc = {};
@@ -273,7 +299,7 @@ void CLevel_GamePlay::Format_ImGui()
 			for (auto item : *pvecInven)
 				SaveStream << item << ' ';
 
-			SaveStream << ITEM_NONE << '\n';
+			SaveStream << ITEM_EOF << '\n';
 		}
 
 		SaveStream.close();
@@ -484,8 +510,8 @@ void CLevel_GamePlay::Format_SettingWindow()
 		{
 			ImGui::TableNextColumn();
 			char buf[128];
-			sprintf_s(buf, "%d ##%d", (int)(*iter), i);
-			//sprintf_s(buf, "%s ##%d", ItemID_To_Char(*iter), i);
+			//sprintf_s(buf, "%d ##%d", (int)(*iter), i);
+			sprintf_s(buf, "%s ##%d", ItemID_To_Char(*iter), i);
 			if (ImGui::Button(buf))
 			{
 				iter = pinven->erase(iter);
@@ -666,7 +692,7 @@ void CLevel_GamePlay::Attatch_On_Picking()
 
 void CLevel_GamePlay::Key_Input()
 {
-	if (GetAsyncKeyState(VK_LSHIFT))
+	if (GetAsyncKeyState(VK_RSHIFT))
 	{
 		m_pGameInstance->Set_CameraIndex(2);
 	}
@@ -712,6 +738,25 @@ const char* CLevel_GamePlay::CollectibleID_To_Char(_int _eCollectibleID)
 	return "";
 }
 
+const char* CLevel_GamePlay::ItemID_To_Char(ITEMID _eItemID)
+{
+	switch (_eItemID)
+	{
+	case Client::ITEM_CARERA:
+		return "Camera";
+	case Client::ITEM_SCOPE:
+		return "Scope";
+	case Client::ITEM_SEARCHDRONE:
+		return "SearchDrone";
+	case Client::ITEM_GUNPOWDER:
+		return "Gunpowder";
+	default:
+		return "";
+	}
+
+	return "";
+}
+
 void CLevel_GamePlay::Load_Savemonster(ifstream* _LoadStream)
 {
 	_int iOutput;
@@ -740,7 +785,7 @@ void CLevel_GamePlay::Load_Savemonster(ifstream* _LoadStream)
 	{
 		int eID;
 		*_LoadStream >> eID;
-		if (-1 == (ITEMID)eID)
+		if (ITEM_EOF == (ITEMID)eID)
 			break;
 		pMonster->Add_Item((ITEMID)eID);
 	}

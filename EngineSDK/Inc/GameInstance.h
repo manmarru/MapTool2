@@ -74,20 +74,6 @@ public:
 	_vector Get_CamPosition_Vector() const;
 #pragma endregion
 
-#pragma region TARGET_MANAGER
-	HRESULT Add_RenderTarget(const _wstring& strTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	HRESULT Add_MRT(const _wstring& strMRTTag, const _wstring& strTargetTag);
-	HRESULT Begin_MRT(const _wstring& strMRTTag);
-	HRESULT End_MRT();
-	HRESULT Bind_RT_ShaderResource(class CShader* pShader, const _wstring& strTargetTag, const _char* pConstantName);
-	HRESULT Copy_RenderTarget(const _wstring& strTargetTag, ID3D11Texture2D* pTexture);
-
-#ifdef _DEBUG
-	HRESULT Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
-	HRESULT Render_MRT_Debug(const _wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
-#endif
-#pragma endregion
-
 #pragma region PICKING
 	void Transform_MouseRay_ToLocalSpace(const _float4x4& WorldMatrix);	
 	_bool isPicked_InLocalSpace(const _float3& vPointA, const _float3& vPointB, const _float3& vPointC, _float3* pOut);
@@ -114,7 +100,6 @@ private:
 	class CPipeLine*				m_pPipeLine = { nullptr };
 	class CPicking*					m_pPicking = { nullptr };
 	class CCameraManager*			m_pCameraManager = { nullptr };
-	class CTarget_Manager*			m_pTarget_Manager = { nullptr };
 
 public:	
 	void Release_Engine();

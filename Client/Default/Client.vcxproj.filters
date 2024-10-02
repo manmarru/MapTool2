@@ -168,9 +168,6 @@
     <ClInclude Include="..\public\ItemBox.h">
       <Filter>02.GameObjects\ItemBox</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Client_Enums.h">
-      <Filter>99.Defines</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -305,10 +302,5 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCustomNavi.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Bin\ShaderFiles\Shader_Engine_Defines.hlsli">
-      <Filter>97.ShaderFiles</Filter>
-    </None>
   </ItemGroup>
 </Project>

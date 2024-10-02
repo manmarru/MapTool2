@@ -124,12 +124,6 @@
     <Filter Include="98.ShaderFiles">
       <UniqueIdentifier>{03c5b152-9b01-4aa4-ba62-64f3def56d63}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\08.RenderTargets">
-      <UniqueIdentifier>{aed04bcb-903d-4ed5-8b1e-78e767eae002}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\08.RenderTargets\Manager">
-      <UniqueIdentifier>{e96f160f-042b-4d66-b79d-e1f7b593f6d7}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -239,12 +233,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Cell.cpp">
       <Filter>01.Utility\03.Components\VIBuffer\Cell</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Target_Manager.cpp">
-      <Filter>01.Utility\08.RenderTargets\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\RenderTarget.cpp">
-      <Filter>01.Utility\08.RenderTargets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -367,12 +355,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Cell.h">
       <Filter>01.Utility\03.Components\VIBuffer\Cell</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Target_Manager.h">
-      <Filter>01.Utility\08.RenderTargets\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\RenderTarget.h">
-      <Filter>01.Utility\08.RenderTargets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

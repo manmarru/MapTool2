@@ -90,7 +90,6 @@ BlendState BS_AlphaBlend
 BlendState BS_OnebyOne
 {
 	BlendEnable[0] = true;
-	BlendEnable[1] = true;
 
 	SrcBlend = one;
 	DestBlend = one;

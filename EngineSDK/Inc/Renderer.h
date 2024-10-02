@@ -25,13 +25,6 @@ private:
 	ID3D11Device*				m_pDevice = { nullptr };
 	ID3D11DeviceContext*		m_pContext = { nullptr };
 	list<class CGameObject*>	m_RenderObjects[RG_END];
-	class CGameInstance* m_pGameInstance = { nullptr };
-
-private:
-	class CShader* m_pShader = { nullptr };
-	class CVIBuffer_Rect* m_pVIBuffer = { nullptr };
-
-	_float4x4				m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 
 private:
 	HRESULT Render_Priority();
