@@ -15,7 +15,6 @@
 
 #include "Monster.h"
 #include "Beast.h"
-#include "ItemBox.h"
 #include "Collectible.h"
 #include "CCollectibleUI.h"
 
@@ -167,7 +166,6 @@ HRESULT CLoader::Ready_Resources_For_GamePlayLevel()
 	wstring boxName;
 	_char ModelPath_ItemBox[MAX_PATH];
 	wchar_t buffer[MAX_PATH];
-	PreTransformMatrix = XMMatrixIdentity();// *XMMatrixRotationY(XMConvertToRadians(-90.0f));
 	for (size_t i = 1; i < 30; i++)
 	{
 		swprintf(buffer, MAX_PATH, TEXT("Prototype_Component_Model_ItemSpot_%d"), i);
@@ -176,7 +174,7 @@ HRESULT CLoader::Ready_Resources_For_GamePlayLevel()
 		snprintf(ModelPath_ItemBox, MAX_PATH, "../Bin/Resources/Models/ItemBox/Hotel/ItemSpot_(%d)/ItemSpot.fbx", i);
 		//For Prototype_Component_Model_ItemSpot_%d
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, boxName,
-			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, ModelPath_ItemBox, PreTransformMatrix))))
+			CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, ModelPath_ItemBox))))
 			return E_FAIL;
 	}
 
@@ -330,11 +328,6 @@ HRESULT CLoader::Ready_Resources_For_GamePlayLevel()
 	/* For. Prototype_GameObject_Beast */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Beast"),
 		CBeast::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For. Prototype_GameObject_ItemBox */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemBox"),
-		CItemBox::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For. Prototype_GameObject_Collectible */
