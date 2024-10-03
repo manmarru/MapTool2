@@ -1,8 +1,8 @@
 #include "Shader_Engine_Defines.hlsli"
-/* float2 float3 float4 == vector */
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_DiffuseTexture;
+uint			g_iObjNum = 0;
 
 
 struct VS_IN
@@ -43,7 +43,8 @@ struct PS_IN
 
 struct PS_OUT
 {
-	vector vColor : SV_TARGET0;
+	vector vColor :		SV_TARGET0;
+    vector vPickDepth : SV_TARGET1;
 };
 
 
@@ -52,13 +53,13 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 	
 	Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
-
+    Out.vPickDepth = vector(0.f, (float) g_iObjNum, 1.f, 1.f);
+	
 	if (0.3f >= Out.vColor.a)
 		discard;
 
 	return Out;
 }
-
 
 
 technique11	DefaultTechnique

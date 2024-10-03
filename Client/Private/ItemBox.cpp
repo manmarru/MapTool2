@@ -119,6 +119,8 @@ CGameObject* CItemBox::Clone(void* _pArg)
         Safe_Release(pInstance);
     }
 
+    m_iObjNum = m_pGameInstance->Invest();
+
     return pInstance;
 }
 

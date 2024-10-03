@@ -2,17 +2,52 @@
 #include "GameObject.h"
 
 #include "BlendObject.h"
+#include "GameInstance.h"
+#include "Shader.h"
+
+#include "VIBuffer_Rect.h"
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
 	, m_pContext { pContext }
+	, m_pGameInstance{ CGameInstance::Get_Instance() }
 {
+	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
 }
 
 HRESULT CRenderer::Initialize()
 {
+	_uint iNumViewports = { 1 };
+
+	D3D11_VIEWPORT ViewportDesc{};
+
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_PickDepth"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	if (nullptr == m_pShader)
+		return E_FAIL;
+
+
+	//MRT_GameObjects
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_PickDepth"))))
+		return E_FAIL;
+
+	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pVIBuffer)
+		return E_FAIL;
+
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(ViewportDesc.Width, ViewportDesc.Height, 1.f));
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.0f, 1.f));
+
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_PickDepth"), 150.f, 250.f, 100.f, 100.f)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -57,8 +92,10 @@ HRESULT CRenderer::Render_Priority()
 	return S_OK;
 }
 
+
 HRESULT CRenderer::Render_NonBlend()
 {
+
 	for (auto& pGameObject : m_RenderObjects[RG_NONBLEND])
 	{
 		if (nullptr != pGameObject)
@@ -139,4 +176,5 @@ void CRenderer::Free()
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+	Safe_Release(m_pGameInstance);
 }

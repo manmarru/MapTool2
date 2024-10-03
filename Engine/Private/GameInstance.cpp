@@ -7,6 +7,8 @@
 #include "GameObject.h"
 #include "Picking.h"
 #include "CameraManager.h"
+#include "Target_Manager.h"
+#include "Chaser.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -22,8 +24,16 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInst, _uint iNumLevels, cons
 	if (nullptr == m_pGraphic_Device)
 		return E_FAIL;
 
+	m_pChaser = CChaser::Create();
+	if (nullptr == m_pChaser)
+		return E_FAIL;
+
 	m_pTimer_Manager = CTimer_Manager::Create();
 	if (nullptr == m_pTimer_Manager)
+		return E_FAIL;
+
+	m_pTarget_Manager = CTarget_Manager::Create(*ppDevice, *ppContext);
+	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
 	m_pRenderer = CRenderer::Create(*ppDevice, *ppContext);
@@ -248,6 +258,47 @@ _vector CGameInstance::Get_CamPosition_Vector() const
 {
 	return m_pPipeLine->Get_CamPosition_Vector();
 }
+
+#pragma endregion
+
+#pragma region TARGET_MANAGER
+
+HRESULT CGameInstance::Add_RenderTarget(const _wstring& strTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	return m_pTarget_Manager->Add_RenderTarget(strTargetTag, iWidth, iHeight, ePixelFormat, vClearColor);
+}
+HRESULT CGameInstance::Add_MRT(const _wstring& strMRTTag, const _wstring& strTargetTag)
+{
+	return m_pTarget_Manager->Add_MRT(strMRTTag, strTargetTag);
+}
+HRESULT CGameInstance::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV)
+{
+	return m_pTarget_Manager->Begin_MRT(strMRTTag, pDSV);
+}
+HRESULT CGameInstance::End_MRT()
+{
+	return m_pTarget_Manager->End_MRT();
+}
+HRESULT CGameInstance::Bind_RT_ShaderResource(CShader* pShader, const _wstring& strTargetTag, const _char* pConstantName)
+{
+	return m_pTarget_Manager->Bind_ShaderResource(pShader, strTargetTag, pConstantName);
+}
+HRESULT CGameInstance::Copy_RenderTarget(const _wstring& strTargetTag, ID3D11Texture2D* pTexture)
+{
+	return m_pTarget_Manager->Copy_RenderTarget(strTargetTag, pTexture);
+}
+
+#ifdef _DEBUG
+HRESULT CGameInstance::Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
+{
+	return m_pTarget_Manager->Ready_Debug(strTargetTag, fX, fY, fSizeX, fSizeY);
+}
+HRESULT CGameInstance::Render_MRT_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer)
+{
+	return m_pTarget_Manager->Render(strMRTTag, pShader, pVIBuffer);
+}
+#endif // _DEBUG
+
 #pragma endregion
 
 #pragma region PICKING
@@ -290,6 +341,21 @@ _float3 CGameInstance::Get_Target()
 }
 #pragma endregion
 
+#pragma region CHASER
+void CGameInstance::Set_ChaserTargetPos(_float3 _vPos)
+{
+	return m_pChaser->Set_ChaserTargetPos(_vPos);
+}
+_float3 CGameInstance::Get_ChaserTargetPos()
+{
+	return m_pChaser->Get_ChaserTargetPos();
+}
+_uint CGameInstance::Invest()
+{
+	return m_pChaser->Invest();
+}
+#pragma endregion
+
 
 void CGameInstance::Release_Engine()
 {	
@@ -303,6 +369,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pGraphic_Device);
 	Safe_Release(m_pPicking);
 	Safe_Release(m_pCameraManager);
+	Safe_Release(m_pChaser);
 
 	CGameInstance::Get_Instance()->Destroy_Instance();	
 }
