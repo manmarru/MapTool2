@@ -36,8 +36,8 @@ HRESULT CNavigation::Initialize_Prototype(ifstream* _LoadStream, _fmatrix PreTra
 	if (FAILED(Ready_Cells(_LoadStream)))
 		return E_FAIL;
 
-	if (FAILED(SetUp_Neighbors()))
-		return E_FAIL;
+	//if (FAILED(SetUp_Neighbors()))
+	//	return E_FAIL;
 
 #ifdef _DEBUG
 

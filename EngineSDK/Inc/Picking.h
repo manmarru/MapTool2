@@ -17,12 +17,13 @@ public:
 	_bool isPicked_InWorldSpace(const _float3& vPointA, const _float3& vPointB, const _float3& vPointC, _float3* pOut);
 	_bool isPicked_InLocalSpace(const _float3& vPointA, const _float3& vPointB, const _float3& vPointC, _float3* pOut);
 	POINT Get_MousePos() { return m_tMousePos; }
-	pair<_uint, _uint> ObjectPicking();
+	_uint ObjectPicking();
 
 
 private:
 	ID3D11Device*				m_pDevice = {nullptr};
 	ID3D11DeviceContext*		m_pContext = {nullptr};
+	ID3D11Texture2D*			m_pPickDepthTexture = { nullptr };
 	HWND						m_hWnd = {};
 	_uint						m_iWinSizeX = {};
 	_uint						m_iWinSizeY = {};

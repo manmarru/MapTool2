@@ -28,13 +28,12 @@ HRESULT CRenderer::Initialize()
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_PickDepth"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
-	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
-	if (nullptr == m_pShader)
-		return E_FAIL;
-
-
 	//MRT_GameObjects
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_PickDepth"))))
+		return E_FAIL;
+
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
+	if (nullptr == m_pShader)
 		return E_FAIL;
 
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
@@ -45,7 +44,7 @@ HRESULT CRenderer::Initialize()
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.0f, 1.f));
 
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_PickDepth"), 150.f, 250.f, 100.f, 100.f)))
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_PickDepth"), 100.f, 100.f, 200.f, 200.f)))
 		return E_FAIL;
 
 	return S_OK;
@@ -70,10 +69,18 @@ HRESULT CRenderer::Draw()
 		return E_FAIL;
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
+	if (FAILED(Render_Picking()))
+		return E_FAIL;
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
+	
+
+#ifdef _DEBUG
+	if (FAILED(Render_Debug()))
+		return E_FAIL;
+#endif	
 
 	return S_OK;
 }
@@ -104,6 +111,25 @@ HRESULT CRenderer::Render_NonBlend()
 		Safe_Release(pGameObject);
 	}
 	m_RenderObjects[RG_NONBLEND].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Picking()
+{
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
+		return E_FAIL;
+	for (auto& pGameObject : m_RenderObjects[RG_PICKING])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render_Picking();
+
+		Safe_Release(pGameObject);
+	}
+	m_RenderObjects[RG_PICKING].clear();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -148,6 +174,19 @@ HRESULT CRenderer::Render_UI()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Debug()
+{
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	m_pGameInstance->Render_MRT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer);
+
+
+	return E_NOTIMPL;
+}
+
 CRenderer * CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRenderer*		pInstance = new CRenderer(pDevice, pContext);
@@ -173,8 +212,10 @@ void CRenderer::Free()
 
 		RenderObjects.clear();
 	}
+	Safe_Release(m_pShader);
+	Safe_Release(m_pVIBuffer);
 
+	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
-	Safe_Release(m_pGameInstance);
 }

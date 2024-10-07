@@ -14,9 +14,36 @@ HRESULT CPicking::Initialize(HWND hWnd, _uint iWinSizeX, _uint iWinSizeY)
 {
 	m_hWnd = hWnd;
 
-	m_iWinSizeX = iWinSizeX;
-
+	m_iWinSizeX = iWinSizeX; // 배개변수랑 코드 뺴도 된다
 	m_iWinSizeY = iWinSizeY;
+
+	_uint			iNumViewports = { 1 };
+
+	D3D11_VIEWPORT	ViewportDesc{};
+
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	D3D11_TEXTURE2D_DESC	TextureDesc{};
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = m_iWinSizeX = ViewportDesc.Width;
+	TextureDesc.Height = m_iWinSizeY = ViewportDesc.Height;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_STAGING;
+	/* 추후에 어떤 용도로 바인딩 될 수 있는 View타입의 텍스쳐를 만들기위한 Texture2D입니까? */
+	TextureDesc.BindFlags = 0;
+
+	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pPickDepthTexture)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -120,6 +147,28 @@ _bool CPicking::isPicked_InLocalSpace(const _float3& vPointA, const _float3& vPo
 	}
 
 	return false;
+}
+
+_uint CPicking::ObjectPicking()
+{
+	if (FAILED(m_pGameInstance->Copy_RenderTarget(TEXT("Target_PickDepth"), m_pPickDepthTexture)))
+		return 0;
+
+	POINT ptMouse{};
+	GetCursorPos(&ptMouse);
+	ScreenToClient(m_hWnd, &ptMouse);
+
+	_uint iPixelIndex = ptMouse.y * m_iWinSizeX + ptMouse.x;
+
+	D3D11_MAPPED_SUBRESOURCE SubResource{};
+
+	m_pContext->Map(m_pPickDepthTexture, 0, D3D11_MAP_READ, 0, &SubResource);
+
+	_uint iObjNum = ((_float4*)SubResource.pData)[iPixelIndex].x;
+
+	m_pContext->Unmap(m_pPickDepthTexture, 0);
+
+	return iObjNum;
 }
 
 CPicking* CPicking::Create(ID3D11Device* _pDevice, ID3D11DeviceContext* _pContext, HWND hWnd, _uint iWinSizeX, _uint iWinSizeY)

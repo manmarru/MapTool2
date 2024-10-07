@@ -319,7 +319,12 @@ POINT CGameInstance::Get_MousePos()
 {
 	return m_pPicking->Get_MousePos();
 }
+_uint CGameInstance::ObjectPicking()
+{
+	return m_pPicking->ObjectPicking();
+}
 #pragma endregion
+
 #pragma region CAMERA_MANAGER
 
 HRESULT CGameInstance::Insert_Camera(_int _iCameraID, CGameObject* _pCamera)

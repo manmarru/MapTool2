@@ -11,7 +11,7 @@ BEGIN(Engine)
 class CRenderer final : public CBase
 {
 public:
-	enum RENDERGROUP { RG_PRIORITY, RG_NONBLEND, RG_BLEND, RG_UI, RG_END };
+	enum RENDERGROUP { RG_PRIORITY, RG_NONBLEND, RG_PICKING, RG_BLEND, RG_UI, RG_END };
 private:
 	CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;
@@ -36,8 +36,15 @@ private:
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonBlend();
+	HRESULT Render_Picking();
 	HRESULT Render_Blend();
 	HRESULT Render_UI();
+
+#ifdef _DEBUG
+private:
+	HRESULT Render_Debug();
+
+#endif
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

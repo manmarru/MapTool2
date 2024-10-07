@@ -31,6 +31,7 @@ public:
     virtual void    Update(_float _fTimeDelta);
     virtual void    Late_Update(_float _fTimeDelta);
     virtual HRESULT Render();
+    virtual HRESULT Render_Picking() override;
 
 private:
     HRESULT Ready_Components(_wstring _ModelTag);

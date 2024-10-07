@@ -696,6 +696,14 @@ void CLevel_GamePlay::Key_Input()
 	{
 		m_pGameInstance->Set_CameraIndex(2);
 	}
+
+	if (GetAsyncKeyState(VK_F1))
+	{
+		int a =m_pGameInstance->ObjectPicking();
+		int b(0);
+		a;
+	}
+
 }
 
 const char* CLevel_GamePlay::MonsterID_To_Char(_int _eMonsterID)

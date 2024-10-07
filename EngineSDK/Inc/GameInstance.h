@@ -92,6 +92,7 @@ public:
 	_bool isPicked_InLocalSpace(const _float3& vPointA, const _float3& vPointB, const _float3& vPointC, _float3* pOut);
 	_bool isPicked_InWorldSpace(const _float3& vPointA, const _float3& vPointB, const _float3& vPointC, _float3* pOut);
 	POINT Get_MousePos();
+	_uint ObjectPicking();
 #pragma endregion
 
 #pragma region CAMERA_MANAGER
