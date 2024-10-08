@@ -9,6 +9,7 @@ BEGIN(Client)
 class CBeast;
 class CSaveObj;
 class CCollectible;
+class CItemBox;
 class CLevel_GamePlay final : public CLevel
 {
 private:
@@ -37,6 +38,7 @@ public:
 private:
 	_bool m_bGuiStart{ false };
 	_bool m_bShow_Creating_Window{ false };
+	_bool m_bShow_ItemBox_Window{ false };
 	_bool m_bShow_Setting_Window{ false };
 	_bool m_bShow_Terrain_UI{ false };
 	_bool m_bShow_Collectible_Obj{ false };
@@ -48,6 +50,7 @@ private:
 //	vector<CSaveCollectible*> m_vecCollectible;
 
 	CSaveObj* m_pCurMonster{ nullptr };
+	CItemBox* m_pCurItemBox = { nullptr };
 	_float m_vRotation[3]{ 0.f, 0.f, 0.f };
 	_float m_vRotateALL{ 0.f };
 	_bool m_bRotateAll{ false };
@@ -60,6 +63,7 @@ private:
 	void Format_ImGui();
 	void Format_CreatingWindow();
 	void Format_SettingWindow();
+	void Format_ItemBoxSetting();
 	void Format_GroupMove();
 	void Format_Terrain_UI();
 	void Format_CollectibleOBj();

@@ -31,6 +31,7 @@ public:
 
 public:
 	class CComponent* Find_Component(const _wstring& strComponentTag);
+	HRESULT			Obj_Input(map<_uint, CGameObject*>* _mapObj);
 
 protected:
 	ID3D11Device*				m_pDevice = { nullptr };

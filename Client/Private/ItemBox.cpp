@@ -34,6 +34,10 @@ HRESULT CItemBox::Initialize(void* _pArg)
 
     m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(-165.877, 0.f, -91.058f, 1.f));
 
+    m_iObjNum = m_pGameInstance->Invest();
+
+    m_pGameInstance->Input_Sygnature(this);
+
     return S_OK;
 }
 
@@ -92,6 +96,9 @@ HRESULT CItemBox::Render_Picking()
     if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
         return E_FAIL;
 
+    if (FAILED(m_pShaderCom->Bind_RawValue("g_iObjNum", &m_iObjNum, sizeof(_uint))))
+        return E_FAIL;
+
     _uint		iNumMeshes = m_pModelCom->Get_NumMeshes();
 
     for (size_t i = 0; i < iNumMeshes; i++)
@@ -108,6 +115,26 @@ HRESULT CItemBox::Render_Picking()
 
 
     return S_OK;
+}
+
+_bool CItemBox::Item_Input(ITEMID _eItemID)
+{
+    if (6 <= m_listInventory.size())
+        return false;
+
+    m_listInventory.push_back(_eItemID);
+
+    return true;
+}
+
+void CItemBox::Remove_Item(_uint _iIndex)
+{
+    auto iter = m_listInventory.begin();
+    for (size_t i = 0; i < _iIndex; i++)
+    {
+        ++iter;
+    }
+    m_listInventory.erase(iter);
 }
 
 HRESULT CItemBox::Ready_Components(_wstring _ModelTag)
@@ -147,8 +174,6 @@ CGameObject* CItemBox::Clone(void* _pArg)
         MSG_BOX(TEXT("Failed To Cloned : CItemBox"));
         Safe_Release(pInstance);
     }
-
-    m_iObjNum = m_pGameInstance->Invest();
 
     return pInstance;
 }

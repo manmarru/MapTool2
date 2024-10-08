@@ -69,6 +69,17 @@ CComponent * CGameObject::Find_Component(const _wstring & strComponentTag)
 	return iter->second;
 }
 
+HRESULT CGameObject::Obj_Input(map<_uint, CGameObject*>* _mapObj)
+{
+	//이미 존재할경우
+	if (_mapObj->end() != _mapObj->find(m_iObjNum))
+		return E_FAIL;
+
+	(*_mapObj)[m_iObjNum] = this;
+
+	return S_OK;
+}
+
 HRESULT CGameObject::Add_Component(_uint iLevelIndex, const _wstring & strPrototypeTag, const _wstring & strComponentTag, CComponent** ppOut, void * pArg)
 {
 	if (nullptr != Find_Component(strComponentTag))

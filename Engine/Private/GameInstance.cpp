@@ -189,6 +189,16 @@ list<class CGameObject*>* CGameInstance::Get_Objectlist(_uint iLevelIndex, const
 	return m_pObject_Manager->Get_Objectlist(iLevelIndex, strLayerTag);
 }
 
+HRESULT CGameInstance::Input_Sygnature(CGameObject* _pObj)
+{
+	return m_pObject_Manager->Input_Sygnature(_pObj);
+}
+
+CGameObject* CGameInstance::Find_Sygnature(_uint _iObjNum)
+{
+	return m_pObject_Manager->Find_Sygnature(_iObjNum);
+}
+
 #pragma endregion
 
 #pragma region COMPONENT_MANAGER

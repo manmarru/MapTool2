@@ -27,6 +27,8 @@ public:
 public:
 	class CComponent* Find_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex);
 	list<class CGameObject*>* Get_Objectlist(_uint iLevelIndex, const _wstring& strLayerTag);
+	CGameObject* Find_Sygnature(_uint _iObjNum) { return m_mapSygnature[_iObjNum]; } // 0 넣으면..알지?
+	HRESULT Input_Sygnature(CGameObject* _pObj);
 
 private:
 
@@ -37,6 +39,9 @@ private:
 	_uint										m_iNumLevels = {};
 	map<const _wstring, class CLayer*>*			m_pLayers = { nullptr };
 	typedef map<const _wstring, class CLayer*>		LAYERS;
+
+	//피킹용
+	map<_uint, CGameObject*>				m_mapSygnature;
 
 private:
 	class CGameObject* Find_Prototype(const _wstring& strPrototypeTag);

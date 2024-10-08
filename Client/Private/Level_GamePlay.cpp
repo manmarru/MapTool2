@@ -68,6 +68,8 @@ void CLevel_GamePlay::Update(_float fTimeDelta)
 		Format_CreatingWindow();
 	if (nullptr != m_pCurMonster)
 		Format_SettingWindow();
+	if (nullptr != m_pCurItemBox && m_bShow_ItemBox_Window)
+		Format_ItemBoxSetting();
 	if (!m_vecMonsterGroup.empty())
 		Format_GroupMove();
 	if (m_bShow_Collectible_Obj)
@@ -344,6 +346,9 @@ void CLevel_GamePlay::Format_ImGui()
 		m_bShow_Collectible_Obj = true;
 	}
 
+	if (ImGui::Button("ItemBox"))
+		m_bShow_ItemBox_Window = true;
+
 	ImGui::Checkbox("Creating", &m_bShow_Creating_Window);
 
 	ImGui::End();
@@ -532,6 +537,46 @@ void CLevel_GamePlay::Format_SettingWindow()
 	ImGui::End();
 }
 
+void CLevel_GamePlay::Format_ItemBoxSetting()
+{
+	ImGui::Begin("Setting", &m_bShow_ItemBox_Window);
+	//인벤토리
+	ImGui::Text("Inventory");
+	ImGui::InputInt("AddItem", &iInput);
+	ImGui::SameLine();
+	if (ImGui::Button("Add"))
+	{
+		m_pCurItemBox->Item_Input((ITEMID)iInput);
+	}
+
+	_bool invenHr = ImGui::BeginTable("inventoryTable", 6);
+	list<ITEMID>* pinven = m_pCurItemBox->Get_Inventory();
+
+	int i(0);
+
+	for (auto iter = pinven->begin(); iter != pinven->end();)
+	{
+		ImGui::TableNextColumn();
+		char buf[128];
+		//sprintf_s(buf, "%d ##%d", (int)(*iter), i);
+		sprintf_s(buf, "%d ##%d", (int)(*iter), i);
+		if (ImGui::Button(buf))
+		{
+			iter = pinven->erase(iter);
+		}
+		else
+			++iter;
+		++i;
+	}
+	if (invenHr)
+		ImGui::EndTable();
+
+
+
+
+	ImGui::End();
+}
+
 void CLevel_GamePlay::Format_GroupMove()
 {
 	ImGui::Begin("Group");
@@ -699,9 +744,10 @@ void CLevel_GamePlay::Key_Input()
 
 	if (GetAsyncKeyState(VK_F1))
 	{
-		int a =m_pGameInstance->ObjectPicking();
-		int b(0);
-		a;
+		int a = m_pGameInstance->ObjectPicking();
+		if (0 != a)
+			m_pCurItemBox = static_cast<CItemBox*>(m_pGameInstance->Find_Sygnature(a));
+		
 	}
 
 }

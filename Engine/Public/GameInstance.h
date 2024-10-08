@@ -46,6 +46,8 @@ public:
 	CGameObject* Add_CloneObject_ToLayer_Get(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strPrototypeTag, void* pArg = nullptr);
 	class CComponent* Find_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	list<class CGameObject*>* Get_Objectlist(_uint iLevelIndex, const _wstring& strLayerTag);
+	HRESULT Input_Sygnature(CGameObject* _pObj);
+	CGameObject* Find_Sygnature(_uint _iObjNum);
 #pragma endregion
 
 

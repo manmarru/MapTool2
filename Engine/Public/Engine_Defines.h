@@ -26,6 +26,7 @@ using namespace DirectX;
 /* 기존 d3dx11포함되어있었던 다양한 기능을 제공하는 헤더 + 라이브러리 파일을 선택적으로 추가한다. */
 //#include <d3dx11.h>
 
+#include <queue>
 #include <map>
 #include <list>
 #include <stack>

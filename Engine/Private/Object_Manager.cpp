@@ -152,6 +152,11 @@ list<class CGameObject*>* CObject_Manager::Get_Objectlist(_uint iLevelIndex, con
 	return Find_Layer(iLevelIndex, strLayerTag)->Get_Objectlist();
 }
 
+HRESULT CObject_Manager::Input_Sygnature(CGameObject* _pObj)
+{
+	return _pObj->Obj_Input(&m_mapSygnature);
+}
+
 CGameObject * CObject_Manager::Find_Prototype(const _wstring & strPrototypeTag)
 {
 	auto	iter = m_Prototypes.find(strPrototypeTag);
