@@ -139,14 +139,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_BackGround()
 	//if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_Terrain"), TEXT("Prototype_GameObject_CustomNavi"))))
 	//	return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ModelMap"), TEXT("Prototype_GameObject_Map_Beach"))))
-		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ModelMap"), TEXT("Prototype_GameObject_Map_Forest"))))
-		return E_FAIL;
+
+	//if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ModelMap"), TEXT("Prototype_GameObject_Map_Beach"))))
+	//	return E_FAIL;
+
+	//if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ModelMap"), TEXT("Prototype_GameObject_Map_Forest"))))
+	//	return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ModelMap"), TEXT("Prototype_GameObject_Map_Hotel"))))
 		return E_FAIL;
+
+
 
 	//if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Prototype_GameObject_Sky"))))
 	//	return E_FAIL;
@@ -301,7 +305,7 @@ void CLevel_GamePlay::Format_ImGui()
 			for (auto item : *pvecInven)
 				SaveStream << item << ' ';
 
-			SaveStream << ITEM_EOF << '\n';
+			SaveStream << ITEM_NONE << '\n';
 		}
 
 		SaveStream.close();
@@ -516,7 +520,7 @@ void CLevel_GamePlay::Format_SettingWindow()
 			ImGui::TableNextColumn();
 			char buf[128];
 			//sprintf_s(buf, "%d ##%d", (int)(*iter), i);
-			sprintf_s(buf, "%s ##%d", ItemID_To_Char(*iter), i);
+			sprintf_s(buf, "%d ##%d", (_int)*iter, i);
 			if (ImGui::Button(buf))
 			{
 				iter = pinven->erase(iter);
@@ -531,7 +535,7 @@ void CLevel_GamePlay::Format_SettingWindow()
 
 	if (GetAsyncKeyState('P'))
 	{
-		Attatch_On_Picking();
+		//Attatch_On_Picking(); ㅋㅋ 이걸 왜함 리소스 다있는데
 	}
 
 	ImGui::End();
@@ -542,6 +546,19 @@ void CLevel_GamePlay::Format_ItemBoxSetting()
 	ImGui::Begin("Setting", &m_bShow_ItemBox_Window);
 	//인벤토리
 	ImGui::Text("Inventory");
+
+	ImGui::SameLine();
+	if (ImGui::Button("saveItemBox"))
+	{
+		Save_ItemBox();
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("LoadItemBox"))
+	{
+		Load_ItemBox();
+	}
+
 	ImGui::InputInt("AddItem", &iInput);
 	ImGui::SameLine();
 	if (ImGui::Button("Add"))
@@ -570,7 +587,6 @@ void CLevel_GamePlay::Format_ItemBoxSetting()
 	}
 	if (invenHr)
 		ImGui::EndTable();
-
 
 
 
@@ -792,25 +808,6 @@ const char* CLevel_GamePlay::CollectibleID_To_Char(_int _eCollectibleID)
 	return "";
 }
 
-const char* CLevel_GamePlay::ItemID_To_Char(ITEMID _eItemID)
-{
-	switch (_eItemID)
-	{
-	case Client::ITEM_CARERA:
-		return "Camera";
-	case Client::ITEM_SCOPE:
-		return "Scope";
-	case Client::ITEM_SEARCHDRONE:
-		return "SearchDrone";
-	case Client::ITEM_GUNPOWDER:
-		return "Gunpowder";
-	default:
-		return "";
-	}
-
-	return "";
-}
-
 void CLevel_GamePlay::Load_Savemonster(ifstream* _LoadStream)
 {
 	_int iOutput;
@@ -839,7 +836,7 @@ void CLevel_GamePlay::Load_Savemonster(ifstream* _LoadStream)
 	{
 		int eID;
 		*_LoadStream >> eID;
-		if (ITEM_EOF == (ITEMID)eID)
+		if (ITEM_NONE == (ITEMID)eID)
 			break;
 		pMonster->Add_Item((ITEMID)eID);
 	}
@@ -851,6 +848,51 @@ void CLevel_GamePlay::Load_Savemonster(ifstream* _LoadStream)
 	}
 
 	m_vecMonster.push_back(pMonster);
+}
+
+void CLevel_GamePlay::Save_ItemBox()
+{
+	ofstream SaveStream("../Bin/Data/ItemBox.txt", ios::trunc);
+
+	ITEMID saveinventory[6];
+	memset(saveinventory, ITEM_NONE, sizeof(ITEMID) * 6);
+
+	_int i(0);
+	for (auto pObj : *m_pGameInstance->Get_Objectlist(LEVEL_GAMEPLAY, TEXT("Layer_ItemBox")))
+	{
+		i = 0;
+		for (auto item : *static_cast<CItemBox*>(pObj)->Get_Inventory())
+		{
+			saveinventory[i] = item;
+
+			++i;
+		}
+		SaveStream.write((const char*)(&saveinventory), sizeof(saveinventory));
+	}
+
+
+
+	SaveStream.close();
+}
+
+void CLevel_GamePlay::Load_ItemBox()
+{
+	ifstream LoadStream("../Bin/Data/ItemBox.txt");
+
+	ITEMID Loadinventory[6];
+	memset(Loadinventory, ITEM_NONE, sizeof(ITEMID) * 6);
+
+	_int i(0);
+	for (auto pObj : *m_pGameInstance->Get_Objectlist(LEVEL_GAMEPLAY, TEXT("Layer_ItemBox")))
+	{
+		LoadStream.read((char*)Loadinventory, sizeof(ITEMID) * 6);
+		for (size_t i = 0; i < 6; i++)
+		{
+			static_cast<CItemBox*>(pObj)->Item_Input(Loadinventory[i]);
+		}
+	}
+
+	LoadStream.close();
 }
 
 
@@ -870,5 +912,9 @@ CLevel_GamePlay * CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCon
 void CLevel_GamePlay::Free()
 {
 	__super::Free();
+
+	/*ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();*/
 
 }

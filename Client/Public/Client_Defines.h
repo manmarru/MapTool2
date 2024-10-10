@@ -45,11 +45,71 @@ namespace Client
 
 	enum ITEMID
 	{
-		ITEM_EOF = -1
-		, ITEM_CARERA
-		, ITEM_SCOPE
-		, ITEM_SEARCHDRONE
-		, ITEM_GUNPOWDER
+		ITEM_NONE = -1
+		, ITEM_SODA
+		, ITEM_POTATO
+		, ITEM_GARLIC
+		, ITEM_BREAD
+		, ITEM_MEAT
+		, ITEM_BUTTER
+		, ITEM_WHISKEY//여까지	검정
+
+		, ITEM_GARLIC_BACON //	초록
+		, ITEM_BURGER
+
+		, ITEM_FRIED_POTATO
+		, ITEM_HIGHBALL //		파랑
+
+		, ITEM_ELEVENSET //		노랑
+
+
+		, ITEM_RUSTY_SWORD //	검정
+		, ITEM_PICKAXE // 곡괭이
+		, ITEM_BRANCH //나뭇가지
+		, ITEM_STONE	//돌
+		, ITEM_HEADBAND //머리띠
+		, ITEM_SHIRT //셔
+		, ITEM_BANDAGE	//붕대
+		, ITEM_BRACELET //팔찌
+		, ITEM_FEATHER //깃털
+		, ITEM_LEATHER //가죽
+		, ITEM_RUBBER //고무
+		, ITEM_SCRAP_METAL //고철
+		, ITEM_TOKEN //마패
+		, ITEM_PAPER //종이
+		, ITEM_SNEAKERS //운동화
+		, ITEM_ORE //광석
+		, ITEM_CHAIN //쇠사슬
+		, ITEM_BOW //활
+
+		, ITEM_E_COMPONENTS //초록
+		, ITEM_GOLD //금
+		, ITEM_BRACER //브레이서 - 초록장비
+		, ITEM_BOOTS //부츠
+		, ITEM_MASK //가면
+		, ITEM_LEATHER_ARMOR //가죽갑옷
+		, ITEM_LONGBOW //장궁	- 여기까지
+
+		, ITEM_GOLD_BRACELET //파랑
+		, ITEM_HELMET
+		, ITEM_CHAINMAIL
+		, ITEM_MOTOR
+		, ITEM_DAGGER
+
+		, ITEM_LIFETREE //보라
+		, ITEM_TONFA		//여기부터 다시 장비
+		, ITEM_FINALBOW
+		, ITEM_OPS
+		, ITEM_BURGENET
+		, ITEM_COMMANDER_ARMOR
+		, ITEM_EOD
+		, ITEM_DRAUPNIR
+		, ITEM_SMART_WATCH
+		, ITEM_KLINGON_BOOTS
+		, ITEM_TACHYON
+		, ITEM_GAUNTLET
+
+		, ITEM_AMULET //황금
 
 		, ITEM_END
 	};

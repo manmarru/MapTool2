@@ -148,15 +148,15 @@ HRESULT CLoader::Ready_Resources_For_GamePlayLevel()
 	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/NaviMesh/NaviMesh.fbx", PreTransformMatrix))))
 	//	return E_FAIL;
 
-	//For Prototype_Component_Model_Beach
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Beach"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/Beach/Rocks_SandBeach.fbx"))))
-		return E_FAIL;
+	////For Prototype_Component_Model_Beach
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Beach"),
+	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/Beach/Rocks_SandBeach.fbx"))))
+	//	return E_FAIL;
 
-	//For Prototype_Component_Model_Forest
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Forest"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/Forest/Ivy_Forest_Set.fbx"))))
-		return E_FAIL;
+	////For Prototype_Component_Model_Forest
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Forest"),
+	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/Forest/Ivy_Forest_Set.fbx"))))
+	//	return E_FAIL;
 
 	//For Prototype_Component_Model_Hotel
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Hotel"),

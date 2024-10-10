@@ -76,9 +76,9 @@ private:
 	void Attatch_On_Picking();
 	const char* MonsterID_To_Char(_int _eMonsterID);
 	const char* CollectibleID_To_Char(_int _eCollectibleID);
-	const char* ItemID_To_Char(ITEMID _eItemID);
 	void Load_Savemonster(ifstream* _LoadStream);
-
+	void Save_ItemBox();
+	void Load_ItemBox();
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
