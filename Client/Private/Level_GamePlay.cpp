@@ -867,10 +867,9 @@ void CLevel_GamePlay::Save_ItemBox()
 
 			++i;
 		}
-		SaveStream.write((const char*)(&saveinventory), sizeof(saveinventory));
+		SaveStream.write((const char*)(&saveinventory), sizeof(ITEMID) * 6);
+		memset(saveinventory, ITEM_NONE, sizeof(ITEMID) * 6);
 	}
-
-
 
 	SaveStream.close();
 }
@@ -890,6 +889,7 @@ void CLevel_GamePlay::Load_ItemBox()
 		{
 			static_cast<CItemBox*>(pObj)->Item_Input(Loadinventory[i]);
 		}
+		memset(Loadinventory, ITEM_NONE, sizeof(ITEMID) * 6);
 	}
 
 	LoadStream.close();
