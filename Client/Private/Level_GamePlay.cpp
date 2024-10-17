@@ -195,7 +195,15 @@ HRESULT CLevel_GamePlay::Ready_ItemBox()
 			return E_FAIL;
 	}
 
+	for (size_t i = 30; i < 58; i++)
+	{
+		swprintf(buffer, MAX_PATH, TEXT("Prototype_Component_Model_ItemSpot_%d"), i);
 
+		itembox_Desc.ModelTag = buffer;
+
+		if (FAILED(m_pGameInstance->Add_CloneObject_ToLayer(LEVEL_GAMEPLAY, TEXT("Layer_ItemBox"), TEXT("Prototype_GameObject_ItemBox_Beach"), &itembox_Desc)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -852,23 +860,30 @@ void CLevel_GamePlay::Load_Savemonster(ifstream* _LoadStream)
 
 void CLevel_GamePlay::Save_ItemBox()
 {
-	ofstream SaveStream("../Bin/Data/ItemBox.txt", ios::trunc);
+	ofstream SaveStream("../Bin/Data/ItemBoxInventory.txt", ios::trunc);
 
 	ITEMID saveinventory[6];
-	memset(saveinventory, ITEM_NONE, sizeof(ITEMID) * 6);
 
 	_int i(0);
-	for (auto pObj : *m_pGameInstance->Get_Objectlist(LEVEL_GAMEPLAY, TEXT("Layer_ItemBox")))
+	list<CGameObject*> itemboxes = *(m_pGameInstance->Get_Objectlist(LEVEL_GAMEPLAY, TEXT("Layer_ItemBox")));
+	for (auto pObj : itemboxes)
 	{
+		memset(saveinventory, ITEM_NONE, sizeof(ITEMID) * 6);
 		i = 0;
 		for (auto item : *static_cast<CItemBox*>(pObj)->Get_Inventory())
 		{
 			saveinventory[i] = item;
-
 			++i;
+			if (i >= 6)
+				break;
 		}
-		SaveStream.write((const char*)(&saveinventory), sizeof(ITEMID) * 6);
-		memset(saveinventory, ITEM_NONE, sizeof(ITEMID) * 6);
+		//SaveStream.write((const char*)(&saveinventory), sizeof(ITEMID) * 6);
+
+		for (size_t i = 0; i < 6; i++)
+		{
+			SaveStream << saveinventory[i] << ' ';
+		}
+		SaveStream << endl;
 	}
 
 	SaveStream.close();
@@ -876,18 +891,25 @@ void CLevel_GamePlay::Save_ItemBox()
 
 void CLevel_GamePlay::Load_ItemBox()
 {
-	ifstream LoadStream("../Bin/Data/ItemBox.txt");
+	ifstream LoadStream("../Bin/Data/ItemBoxInventory.txt");
 
-	ITEMID Loadinventory[6];
+	//ITEMID Loadinventory[6];
+	_int Loadinventory[6];
 	memset(Loadinventory, ITEM_NONE, sizeof(ITEMID) * 6);
 
 	_int i(0);
 	for (auto pObj : *m_pGameInstance->Get_Objectlist(LEVEL_GAMEPLAY, TEXT("Layer_ItemBox")))
 	{
-		LoadStream.read((char*)Loadinventory, sizeof(ITEMID) * 6);
+	
+		//LoadStream.read((char*)Loadinventory, sizeof(ITEMID) * 6);
 		for (size_t i = 0; i < 6; i++)
 		{
-			static_cast<CItemBox*>(pObj)->Item_Input(Loadinventory[i]);
+			LoadStream >> Loadinventory[i];
+		}
+
+		for (size_t i = 0; i < 6; i++)
+		{
+			static_cast<CItemBox*>(pObj)->Item_Input((ITEMID)Loadinventory[i]);
 		}
 		memset(Loadinventory, ITEM_NONE, sizeof(ITEMID) * 6);
 	}

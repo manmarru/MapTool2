@@ -168,6 +168,9 @@
     <ClInclude Include="..\public\ItemBox.h">
       <Filter>02.GameObjects\ItemBox</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ItemBox_Beach.h">
+      <Filter>02.GameObjects\ItemBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -252,6 +255,9 @@
       <Filter>02.GameObjects\LumiaMap</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ItemBox.cpp">
+      <Filter>02.GameObjects\ItemBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ItemBox_Beach.cpp">
       <Filter>02.GameObjects\ItemBox</Filter>
     </ClCompile>
   </ItemGroup>
