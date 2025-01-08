@@ -25,7 +25,7 @@ private:
 	ID3D11Device*			m_pDevice = { nullptr };
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
-private:	
+private:
 	HRESULT Ready_Prototype_Component_Static();
 	HRESULT Open_Level(LEVELID eStartLevelID);
 

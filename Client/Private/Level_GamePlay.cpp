@@ -543,7 +543,7 @@ void CLevel_GamePlay::Format_SettingWindow()
 
 	if (GetAsyncKeyState('P'))
 	{
-		//Attatch_On_Picking(); ㅋㅋ 이걸 왜함 리소스 다있는데
+		Attatch_On_Picking(); //ㅋㅋ 이걸 왜함 리소스 다있는데
 	}
 
 	ImGui::End();
@@ -938,5 +938,4 @@ void CLevel_GamePlay::Free()
 	/*ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();*/
-
 }
